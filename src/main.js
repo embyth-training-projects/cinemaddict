@@ -266,3 +266,8 @@ const createFooterStatsTemplate = () => {
     </section>`
   );
 };
+
+// Функция отрисовки компонента на страницу
+const renderComponent = (container, component, place = `beforeend`) => {
+  container.insertAdjacentHTML(place, component);
+};
