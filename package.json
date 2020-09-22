@@ -1,0 +1,26 @@
+{
+  "name": "cinemaddict",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Rate, comment and save your favorite movies with cinemaddict",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:embyth/cinemaddict.git"
+  },
+  "bugs": {
+    "url": "https://github.com/embyth/cinemaddict/issues"
+  },
+  "scripts": {
+    "eslint": "eslint src/**/*.js",
+    "test": "npm run eslint"
+  },
+  "devDependencies": {
+    "eslint": "7.9.0",
+    "eslint-config-htmlacademy": "0.6.0"
+  },
+  "license": "MIT",
+  "dependencies": {},
+  "engines": {
+    "node": "12"
+  }
+}
