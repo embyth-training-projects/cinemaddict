@@ -16,3 +16,7 @@ build/
 
 # Служебная папка расширения IDE
 .history/
+
+# Собранные JS-файлы (бандл)
+public/bundle.js
+public/bundle.js.map
