@@ -1,3 +1,14 @@
+// Функция проверки длины описания фильма
+const checkDescriptionLength = (description) => {
+  const MAX_DESCRIPTION_LENGTH = 140;
+
+  if (description.length > MAX_DESCRIPTION_LENGTH) {
+    return description.slice(0, MAX_DESCRIPTION_LENGTH - 1) + `...`;
+  }
+
+  return description;
+};
+
 // Получаем название класса для активной кнопки
 const isControlItemActive = (item) => item ? `film-card__controls-item--active` : ``;
 
@@ -19,7 +30,7 @@ export const createMovieCardTemplate = (movie) => {
         <span class="film-card__genre">${genres[0]}</span>
       </p>
       <img src="${poster}" alt="${title}" class="film-card__poster">
-      <p class="film-card__description">${description}</p>
+      <p class="film-card__description">${checkDescriptionLength(description)}</p>
       <a class="film-card__comments">${comments.length} comments</a>
       <form class="film-card__controls">
         <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${isControlItemActive(watchlist)}">Add to watchlist</button>

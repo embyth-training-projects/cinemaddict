@@ -3,21 +3,14 @@ import {getRandomInteger, generateDate, getRandomElement} from '../utils';
 
 // Функция генерации описания фильма случайным образом
 const generateDescription = () => {
-  const MAX_DESCRIPTION_LENGTH = 140;
-  const MAX_DESCRIPTION_SENTENCES = 5;
   const MIN_DESCRIPTION_SENTENCES = 1;
+  const MAX_DESCRIPTION_SENTENCES = 5;
 
   const sentencesAmount = getRandomInteger(MIN_DESCRIPTION_SENTENCES, MAX_DESCRIPTION_SENTENCES);
-  let randomDescriptions = [];
+  let description = ``;
 
   for (let i = 0; i < sentencesAmount; i++) {
-    randomDescriptions.push(getRandomElement(SENTENCES));
-  }
-
-  const description = randomDescriptions.join(` `);
-
-  if (description.length > MAX_DESCRIPTION_LENGTH) {
-    return description.slice(0, MAX_DESCRIPTION_LENGTH - 1) + `...`;
+    description += getRandomElement(SENTENCES);
   }
 
   return description;
@@ -68,14 +61,13 @@ const generateActors = () => {
   const MAX_ACTORS_AMOUNT = 4;
 
   const actorsAmount = getRandomInteger(MIN_ACTORS_AMOUNT, MAX_ACTORS_AMOUNT);
-  const randomActors = [];
+  const actors = [];
 
   for (let i = 0; i < actorsAmount; i++) {
-    const randomIndex = getRandomInteger(0, ACTORS.length - 1);
-    randomActors.push(ACTORS[randomIndex]);
+    actors.push(getRandomElement(ACTORS));
   }
 
-  return randomActors;
+  return actors;
 };
 
 // Функция генерации обьекта релиза фильма случайным образом
