@@ -98,3 +98,13 @@ export const GENRES = [
   `Fantasy`,
   `Comedy`,
 ];
+
+export const AVATAR_PATHS = [
+  `images/bitmap.png`,
+  `images/emoji/angry.png`,
+  `images/emoji/puke.png`,
+  `images/emoji/sleeping.png`,
+  `images/emoji/smile.png`,
+];
+
+export const RANKS = [`novice`, `fan`, `movie buff`];
