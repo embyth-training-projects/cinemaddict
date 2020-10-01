@@ -64,4 +64,4 @@ renderComponent(filmsParentNode, createExtraFilmContainerTemplate(EXTRA_BLOCK_TI
 renderFilmCards(getExtraListContainerNode(EXTRA_BLOCK_TITLE.MOST_COMMENTED), FILMS_AMOUNT.MOST_COMMENTED);
 
 const footerStatictsNode = document.querySelector(`.footer__statistics`);
-renderComponent(footerStatictsNode, createFooterStatsTemplate());
+renderComponent(footerStatictsNode, createFooterStatsTemplate(movies.length));

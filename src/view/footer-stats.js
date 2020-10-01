@@ -1,8 +1,8 @@
 // Фунция создания шаблона статистики в подвале сайта
-export const createFooterStatsTemplate = () => {
+export const createFooterStatsTemplate = (moviesAmount) => {
   return (
     `<section class="footer__statistics">
-      <p>130 291 movies inside</p>
+      <p>${moviesAmount} movies inside</p>
     </section>`
   );
 };
