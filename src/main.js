@@ -7,6 +7,7 @@ import {createMovieCardTemplate} from './view/movie-card';
 import {createShowMoreButtonTemplate} from './view/show-more-button';
 // import {createMovieDetailsTemplate} from './view/movie-details';
 import {createFooterStatsTemplate} from './view/footer-stats';
+import {generateMovie} from './mock/movie';
 
 // Количество карточек фильмов в блоках
 const FILMS_AMOUNT = {
@@ -21,6 +22,8 @@ const EXTRA_BLOCK_TITLE = {
   MOST_COMMENTED: `Most commented`
 };
 
+const movies = new Array(FILMS_AMOUNT.DEFAULT).fill().map(generateMovie);
+
 // Функция отрисовки компонента на страницу
 const renderComponent = (container, component, place = `beforeend`) => {
   container.insertAdjacentHTML(place, component);
@@ -29,7 +32,7 @@ const renderComponent = (container, component, place = `beforeend`) => {
 // Функция отрисовки карточек фильмов
 const renderFilmCards = (container, amount) => {
   for (let i = 0; i < amount; i++) {
-    renderComponent(container, createMovieCardTemplate(), `beforeend`);
+    renderComponent(container, createMovieCardTemplate(movies[i]));
   }
 };
 
