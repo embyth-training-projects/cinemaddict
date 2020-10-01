@@ -1,72 +1,8 @@
-// Функция из интернета по генерации случайного числа из диапазона
-const getRandomInteger = (a = 0, b = 1) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
-
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
-};
-
-// Функция для генерации даты.
-const generateDate = () => {
-  const maxDaysGap = getRandomInteger(0, 365);
-  const daysGap = getRandomInteger(-maxDaysGap, maxDaysGap);
-  let currentDate = new Date();
-
-  currentDate.setHours(23, 59, 59, 999);
-  currentDate.setDate(currentDate.getDate() + daysGap);
-  currentDate = new Date(currentDate);
-
-  return `${currentDate.getFullYear()}/${currentDate.getMonth()}/${currentDate.getDate()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
-};
-
-// Функция генерации названия фильма случайным образом
-const generateTitle = () => {
-  const titles = [
-    `Made for Each Other`,
-    `Popeye the Sailor Meets Sinbad the Sailor`,
-    `Sagebrush Trail`,
-    `Santa Claus Conquers the Martians`,
-    `The Dance of Life`,
-    `The Great Flamarion`,
-    `The Man with the Golden Arm`,
-  ];
-
-  const randomIndex = getRandomInteger(0, titles.length - 1);
-  return titles[randomIndex];
-};
-
-// Функция генерации названия фильма случайным образом
-const generatePosterPath = () => {
-  const posters = [
-    `images/posters/made-for-each-other.png`,
-    `images/posters/popeye-meets-sinbad.png`,
-    `images/posters/sagebrush-trail.jpg`,
-    `images/posters/santa-claus-conquers-the-martians.jpg`,
-    `images/posters/the-dance-of-life.jpg`,
-    `images/posters/the-great-flamarion.jpg`,
-    `images/posters/the-man-with-the-golden-arm.jpg`,
-  ];
-
-  const randomIndex = getRandomInteger(0, posters.length - 1);
-  return posters[randomIndex];
-};
+import {TITLES, POSTERS, SENTENCES, EMOTIONS, AUTHORS, AGE_RATINGS, DIRECTORS, WRITERS, ACTORS, COUNTRIES, GENRES} from '../const';
+import {getRandomInteger, generateDate, getRandomElement} from '../utils';
 
 // Функция генерации описания фильма случайным образом
 const generateDescription = () => {
-  const sentences = [
-    `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
-    `Cras aliquet varius magna, non porta ligula feugiat eget.`,
-    `Fusce tristique felis at fermentum pharetra.`,
-    `Aliquam id orci ut lectus varius viverra.`,
-    `Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.`,
-    `Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.`,
-    `Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.`,
-    `Sed sed nisi sed augue convallis suscipit in sed felis.`,
-    `Aliquam erat volutpat.`,
-    `Nunc fermentum tortor ac porta dapibus.`,
-    `In rutrum ac purus sit amet tempus.`,
-  ];
-
   const MAX_DESCRIPTION_LENGTH = 140;
   const MAX_DESCRIPTION_SENTENCES = 5;
   const MIN_DESCRIPTION_SENTENCES = 1;
@@ -75,8 +11,7 @@ const generateDescription = () => {
   let randomDescriptions = [];
 
   for (let i = 0; i < sentencesAmount; i++) {
-    const randomIndex = getRandomInteger(0, sentences.length - 1);
-    randomDescriptions.push(sentences[randomIndex]);
+    randomDescriptions.push(getRandomElement(SENTENCES));
   }
 
   const description = randomDescriptions.join(` `);
@@ -90,22 +25,6 @@ const generateDescription = () => {
 
 // Функция генерации комментариев к фильми случайным образом
 const generateComments = () => {
-  const emotions = [`smile`, `sleeping`, `puke`, `angry`];
-  const authors = [`Max Kolesnik`, `Vladislav Matyash`, `Nazar Mirniy`, `Sergey Soroka`, `Omar Habuniia`];
-  const sentences = [
-    `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
-    `Cras aliquet varius magna, non porta ligula feugiat eget.`,
-    `Fusce tristique felis at fermentum pharetra.`,
-    `Aliquam id orci ut lectus varius viverra.`,
-    `Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.`,
-    `Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.`,
-    `Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.`,
-    `Sed sed nisi sed augue convallis suscipit in sed felis.`,
-    `Aliquam erat volutpat.`,
-    `Nunc fermentum tortor ac porta dapibus.`,
-    `In rutrum ac purus sit amet tempus.`,
-  ];
-
   const MIN_COMMENTS_AMOUNT = 0;
   const MAX_COMMENTS_AMOUNT = 5;
 
@@ -113,10 +32,10 @@ const generateComments = () => {
   const randomComments = [];
 
   for (let i = 0; i < commentsAmount; i++) {
-    const emoji = emotions[getRandomInteger(0, emotions.length - 1)];
+    const emoji = getRandomElement(EMOTIONS);
     const date = generateDate();
-    const author = authors[getRandomInteger(0, authors.length - 1)];
-    const comment = sentences[getRandomInteger(0, sentences.length - 1)];
+    const author = getRandomElement(AUTHORS);
+    const comment = getRandomElement(SENTENCES);
 
     const commentItem = {emoji, date, author, comment};
     randomComments.push(commentItem);
@@ -128,45 +47,8 @@ const generateComments = () => {
 // Функция генерации рейтинга фильма случайным образом
 const generateRating = () => getRandomInteger(10, 100) / 10;
 
-// Функция генерации возросного рейтинга фильма случайным образом
-const generateAgeRating = () => {
-  const ageRatings = [`6+`, `12+`, `16+`, `18+`];
-
-  const randomIndex = getRandomInteger(0, ageRatings.length - 1);
-  return ageRatings[randomIndex];
-};
-
-// Функция генерации режиссера фильма случайным образом
-const generateDirector = () => {
-  const directors = [
-    `John Cromwell`,
-    `Dave Fleischer`,
-    `Armand Schaefer`,
-    `Nicholas Webster`,
-    `A. Edward Sutherland`,
-    `Anthony Mann`,
-    `Otto Preminger`,
-  ];
-
-  const randomIndex = getRandomInteger(0, directors.length - 1);
-  return directors[randomIndex];
-};
-
 // Функция генерации сценаристов фильма случайным образом
 const generateWriters = () => {
-  const writers = [
-    `Rose Franken`,
-    `Max Fleischer`,
-    `Lindsley Parsons`,
-    `Glenville Mareth`,
-    `Benjamin Glazer`,
-    `Heinz Herald`,
-    `Richard Weil`,
-    `Anne Wigton`,
-    `Walter Newman`,
-    `Lewis Meltzer`,
-  ];
-
   const MIN_WRITERS_AMOUNT = 1;
   const MAX_WRITERS_AMOUNT = 4;
 
@@ -174,8 +56,7 @@ const generateWriters = () => {
   const randomWriters = [];
 
   for (let i = 0; i < writersAmount; i++) {
-    const randomIndex = getRandomInteger(0, writers.length - 1);
-    randomWriters.push(writers[randomIndex]);
+    randomWriters.push(getRandomElement(WRITERS));
   }
 
   return randomWriters;
@@ -183,27 +64,6 @@ const generateWriters = () => {
 
 // Функция генерации актеров фильма случайным образом
 const generateActors = () => {
-  const actors = [
-    `Carole Lombard`,
-    `James Stewart`,
-    `Jack Mercer`,
-    `Mae Questel`,
-    `Gus Wickie`,
-    `John Wayne`,
-    `Nancy Shubert`,
-    `Lane Chandler`,
-    `John Call`,
-    `Leonard Hicks`,
-    `Vincent Beck`,
-    `Hal Skelly`,
-    `Nancy Carroll`,
-    `Erich von Stroheim`,
-    `Mary Beth Hughes`,
-    `Frank Sinatra`,
-    `Eleanor Parker`,
-    `Kim Novak`,
-  ];
-
   const MIN_ACTORS_AMOUNT = 1;
   const MAX_ACTORS_AMOUNT = 4;
 
@@ -211,8 +71,8 @@ const generateActors = () => {
   const randomActors = [];
 
   for (let i = 0; i < actorsAmount; i++) {
-    const randomIndex = getRandomInteger(0, actors.length - 1);
-    randomActors.push(actors[randomIndex]);
+    const randomIndex = getRandomInteger(0, ACTORS.length - 1);
+    randomActors.push(ACTORS[randomIndex]);
   }
 
   return randomActors;
@@ -220,18 +80,9 @@ const generateActors = () => {
 
 // Функция генерации обьекта релиза фильма случайным образом
 const generateRelease = () => {
-  const countries = [
-    `Russia`,
-    `USA`,
-    `India`,
-    `China`,
-    `UK`,
-    `Italia`,
-  ];
-
   return {
-    date: generateDate(),
-    releaseCountry: countries[getRandomInteger(0, countries.length - 1)]
+    date: new Date(getRandomInteger(1895, 2020), getRandomInteger(1, 12), getRandomInteger(1, 30)),
+    releaseCountry: getRandomElement(COUNTRIES),
   };
 };
 
@@ -254,14 +105,6 @@ const generateRuntime = () => {
 
 // Функция генерации жанров фильма случайным образом
 const generateGenres = () => {
-  const genres = [
-    `Drama`,
-    `Thriller`,
-    `Western`,
-    `Fantasy`,
-    `Comedy`,
-  ];
-
   const MIN_GENRES_AMOUNT = 1;
   const MAX_GENRES_AMOUNT = 4;
 
@@ -269,8 +112,7 @@ const generateGenres = () => {
   const randomGenres = [];
 
   for (let i = 0; i < genresAmount; i++) {
-    const randomIndex = getRandomInteger(0, genres.length - 1);
-    randomGenres.push(genres[randomIndex]);
+    randomGenres.push(getRandomElement(GENRES));
   }
 
   return randomGenres;
@@ -281,18 +123,18 @@ export const generateMovie = () => {
   return {
     comments: generateComments(),
     filmInfo: {
-      title: generateTitle(),
-      alternativeTitle: generateTitle(),
-      poster: generatePosterPath(),
+      title: getRandomElement(TITLES),
+      alternativeTitle: getRandomElement(TITLES),
+      poster: getRandomElement(POSTERS),
       description: generateDescription(),
       totalRating: generateRating(),
-      ageRating: generateAgeRating(),
-      director: generateDirector(),
+      ageRating: getRandomElement(AGE_RATINGS),
+      director: getRandomElement(DIRECTORS),
       writers: generateWriters(),
       actors: generateActors(),
       release: generateRelease(),
       runtime: generateRuntime(),
-      genre: generateGenres(),
+      genres: generateGenres(),
     },
     userDetails: {
       watchlist: Boolean(getRandomInteger(0, 1)),
