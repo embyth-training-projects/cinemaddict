@@ -33,6 +33,13 @@ const movies = new Array(MOVIES_AMOUNT.TOTAL).fill().map(generateMovie);
 const filters = generateFilter(movies);
 const user = generateUser();
 
+const renderFilm = (filmListContainer, film) => {
+  const filmComponent = new FilmCardView(film);
+  const filmDetailsComponent = new FilmDetailsView(film);
+
+  render(filmListContainer, filmComponent.getElement());
+};
+
 // Отрисовываем информацию о пользователе
 const siteHeaderNode = document.querySelector(`.header`);
 render(siteHeaderNode, new UserRankView(user).getElement());
@@ -52,7 +59,7 @@ render(boardComponent.getElement(), filmsListComponent.getElement(), RenderPosit
 const filmsContainer = filmsListComponent.getElement().querySelector(`.films-list__container`);
 movies
   .slice(0, MOVIES_AMOUNT.PER_STEP)
-  .forEach((movie) => render(filmsContainer, new FilmCardView(movie).getElement()));
+  .forEach((movie) => renderFilm(filmsContainer, movie));
 
 // Отрисовываем кнопку 'Show More' по надобности
 if (movies.length > MOVIES_AMOUNT.PER_STEP) {
@@ -66,7 +73,7 @@ if (movies.length > MOVIES_AMOUNT.PER_STEP) {
 
     movies
       .slice(renderedMoviesCount, renderedMoviesCount + MOVIES_AMOUNT.PER_STEP)
-      .forEach((movie) => render(filmsContainer, new FilmCardView(movie).getElement()));
+      .forEach((movie) => renderFilm(filmsContainer, movie));
 
     renderedMoviesCount += MOVIES_AMOUNT.PER_STEP;
 
@@ -99,6 +106,3 @@ movies
 // Отрисовываем футер
 const footerStatictsNode = document.querySelector(`.footer__statistics`);
 render(footerStatictsNode, new FooterStatsView(movies.length).getElement());
-
-// Отрисовываем попап с полной информацией о фильме
-render(document.body, new FilmDetailsView(movies[0]).getElement());
