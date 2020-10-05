@@ -4,6 +4,7 @@ import SiteMenuView from './view/site-menu';
 import SortView from './view/sort';
 import BoardView from './view/board';
 import FilmsListView from './view/films-list';
+import NoDataView from './view/no-data';
 import ExtraContainerView from './view/extra-container';
 import FilmCardView from './view/movie-card';
 import ShowMoreButtonView from './view/show-more-button';
@@ -88,57 +89,62 @@ render(siteMainNode, new SortView().getElement());
 const boardComponent = new BoardView();
 render(siteMainNode, boardComponent.getElement());
 
-const filmsListComponent = new FilmsListView();
-render(boardComponent.getElement(), filmsListComponent.getElement(), RenderPosition.AFTERBEGIN);
+if (movies.length === 0) {
+  render(boardComponent.getElement(), new NoDataView().getElement());
+} else {
+  const filmsListComponent = new FilmsListView();
+  render(boardComponent.getElement(), filmsListComponent.getElement(), RenderPosition.AFTERBEGIN);
 
-// Отрисовываем карточки фильмов
-const filmsContainer = filmsListComponent.getElement().querySelector(`.films-list__container`);
-movies
-  .slice(0, MOVIES_AMOUNT.PER_STEP)
-  .forEach((movie) => renderFilm(filmsContainer, movie));
+  // Отрисовываем карточки фильмов
+  const filmsContainer = filmsListComponent.getElement().querySelector(`.films-list__container`);
+  movies
+    .slice(0, MOVIES_AMOUNT.PER_STEP)
+    .forEach((movie) => renderFilm(filmsContainer, movie));
 
-// Отрисовываем кнопку 'Show More' по надобности
-if (movies.length > MOVIES_AMOUNT.PER_STEP) {
-  const showMoreButtonComponent = new ShowMoreButtonView();
-  let renderedMoviesCount = MOVIES_AMOUNT.PER_STEP;
+  // Отрисовываем кнопку 'Show More' по надобности
+  if (movies.length > MOVIES_AMOUNT.PER_STEP) {
+    const showMoreButtonComponent = new ShowMoreButtonView();
+    let renderedMoviesCount = MOVIES_AMOUNT.PER_STEP;
 
-  render(filmsListComponent.getElement(), showMoreButtonComponent.getElement());
+    render(filmsListComponent.getElement(), showMoreButtonComponent.getElement());
 
-  showMoreButtonComponent.getElement().addEventListener(`click`, (evt) => {
-    evt.preventDefault();
+    showMoreButtonComponent.getElement().addEventListener(`click`, (evt) => {
+      evt.preventDefault();
 
-    movies
-      .slice(renderedMoviesCount, renderedMoviesCount + MOVIES_AMOUNT.PER_STEP)
-      .forEach((movie) => renderFilm(filmsContainer, movie));
+      movies
+        .slice(renderedMoviesCount, renderedMoviesCount + MOVIES_AMOUNT.PER_STEP)
+        .forEach((movie) => renderFilm(filmsContainer, movie));
 
-    renderedMoviesCount += MOVIES_AMOUNT.PER_STEP;
+      renderedMoviesCount += MOVIES_AMOUNT.PER_STEP;
 
-    if (renderedMoviesCount >= movies.length) {
-      showMoreButtonComponent.getElement().remove();
-      showMoreButtonComponent.removeElement();
-    }
-  });
+      if (renderedMoviesCount >= movies.length) {
+        showMoreButtonComponent.getElement().remove();
+        showMoreButtonComponent.removeElement();
+      }
+    });
+  }
+
+  // Отрисовываем дополнительные блоки
+  // Отрисовываем блок с высшем рейтингом фильмов
+  const topRatedList = new ExtraContainerView(EXTRA_BLOCK_TITLE.TOP_RATED);
+  render(boardComponent.getElement(), topRatedList.getElement());
+  const topRatedContainer = topRatedList.getElement().querySelector(`.films-list__container`);
+  movies
+    .sort((a, b) => b.filmInfo.totalRating - a.filmInfo.totalRating)
+    .slice(0, MOVIES_AMOUNT.TOP_RATED)
+    .forEach((movie) => render(topRatedContainer, new FilmCardView(movie).getElement()));
+
+  // Отрисовываем блок с большим количеством комментариев фильмов
+  const mostCommentedList = new ExtraContainerView(EXTRA_BLOCK_TITLE.MOST_COMMENTED);
+  render(boardComponent.getElement(), mostCommentedList.getElement());
+  const mostCommentedContainer = mostCommentedList.getElement().querySelector(`.films-list__container`);
+  movies
+    .sort((a, b) => b.comments.length - a.comments.length)
+    .slice(0, MOVIES_AMOUNT.MOST_COMMENTED)
+    .forEach((movie) => render(mostCommentedContainer, new FilmCardView(movie).getElement()));
+
+  // Отрисовываем футер
+  const footerStatictsNode = document.querySelector(`.footer__statistics`);
+  render(footerStatictsNode, new FooterStatsView(movies.length).getElement());
 }
 
-// Отрисовываем дополнительные блоки
-// Отрисовываем блок с высшем рейтингом фильмов
-const topRatedList = new ExtraContainerView(EXTRA_BLOCK_TITLE.TOP_RATED);
-render(boardComponent.getElement(), topRatedList.getElement());
-const topRatedContainer = topRatedList.getElement().querySelector(`.films-list__container`);
-movies
-  .sort((a, b) => b.filmInfo.totalRating - a.filmInfo.totalRating)
-  .slice(0, MOVIES_AMOUNT.TOP_RATED)
-  .forEach((movie) => render(topRatedContainer, new FilmCardView(movie).getElement()));
-
-// Отрисовываем блок с большим количеством комментариев фильмов
-const mostCommentedList = new ExtraContainerView(EXTRA_BLOCK_TITLE.MOST_COMMENTED);
-render(boardComponent.getElement(), mostCommentedList.getElement());
-const mostCommentedContainer = mostCommentedList.getElement().querySelector(`.films-list__container`);
-movies
-  .sort((a, b) => b.comments.length - a.comments.length)
-  .slice(0, MOVIES_AMOUNT.MOST_COMMENTED)
-  .forEach((movie) => render(mostCommentedContainer, new FilmCardView(movie).getElement()));
-
-// Отрисовываем футер
-const footerStatictsNode = document.querySelector(`.footer__statistics`);
-render(footerStatictsNode, new FooterStatsView(movies.length).getElement());
