@@ -34,6 +34,10 @@ const movies = new Array(MOVIES_AMOUNT.TOTAL).fill().map(generateMovie);
 const filters = generateFilter(movies);
 const user = generateUser();
 
+const siteHeaderNode = document.querySelector(`.header`);
+const siteMainNode = document.querySelector(`.main`);
+const footerStatictsNode = document.querySelector(`.footer__statistics`);
+
 const renderFilm = (filmListContainer, film) => {
   const filmComponent = new FilmCardView(film);
   const filmDetailsComponent = new FilmDetailsView(film);
@@ -77,32 +81,25 @@ const renderFilm = (filmListContainer, film) => {
   render(filmListContainer, filmComponent.getElement());
 };
 
-// Отрисовываем информацию о пользователе
-const siteHeaderNode = document.querySelector(`.header`);
-render(siteHeaderNode, new UserRankView(user).getElement());
-
-// Отрисовываем элементы сортировки и фильтры
-const siteMainNode = document.querySelector(`.main`);
-render(siteMainNode, new SiteMenuView(filters).getElement(), RenderPosition.AFTERBEGIN);
-render(siteMainNode, new SortView().getElement());
-
-const boardComponent = new BoardView();
-render(siteMainNode, boardComponent.getElement());
-
-if (movies.length === 0) {
-  render(boardComponent.getElement(), new NoDataView().getElement());
-} else {
+const renderBoard = (boardContainer, boardFilms) => {
+  const boardComponent = new BoardView();
   const filmsListComponent = new FilmsListView();
+
+  render(boardContainer, boardComponent.getElement());
+
+  if (boardFilms.length === 0) {
+    render(boardComponent.getElement(), new NoDataView().getElement());
+    return;
+  }
+
   render(boardComponent.getElement(), filmsListComponent.getElement(), RenderPosition.AFTERBEGIN);
 
-  // Отрисовываем карточки фильмов
   const filmsContainer = filmsListComponent.getElement().querySelector(`.films-list__container`);
-  movies
+  boardFilms
     .slice(0, MOVIES_AMOUNT.PER_STEP)
     .forEach((movie) => renderFilm(filmsContainer, movie));
 
-  // Отрисовываем кнопку 'Show More' по надобности
-  if (movies.length > MOVIES_AMOUNT.PER_STEP) {
+  if (boardFilms.length > MOVIES_AMOUNT.PER_STEP) {
     const showMoreButtonComponent = new ShowMoreButtonView();
     let renderedMoviesCount = MOVIES_AMOUNT.PER_STEP;
 
@@ -111,40 +108,40 @@ if (movies.length === 0) {
     showMoreButtonComponent.getElement().addEventListener(`click`, (evt) => {
       evt.preventDefault();
 
-      movies
+      boardFilms
         .slice(renderedMoviesCount, renderedMoviesCount + MOVIES_AMOUNT.PER_STEP)
         .forEach((movie) => renderFilm(filmsContainer, movie));
 
       renderedMoviesCount += MOVIES_AMOUNT.PER_STEP;
 
-      if (renderedMoviesCount >= movies.length) {
+      if (renderedMoviesCount >= boardFilms.length) {
         showMoreButtonComponent.getElement().remove();
         showMoreButtonComponent.removeElement();
       }
     });
   }
 
-  // Отрисовываем дополнительные блоки
   // Отрисовываем блок с высшем рейтингом фильмов
   const topRatedList = new ExtraContainerView(EXTRA_BLOCK_TITLE.TOP_RATED);
   render(boardComponent.getElement(), topRatedList.getElement());
   const topRatedContainer = topRatedList.getElement().querySelector(`.films-list__container`);
-  movies
+  boardFilms
     .sort((a, b) => b.filmInfo.totalRating - a.filmInfo.totalRating)
     .slice(0, MOVIES_AMOUNT.TOP_RATED)
-    .forEach((movie) => render(topRatedContainer, new FilmCardView(movie).getElement()));
+    .forEach((movie) => renderFilm(topRatedContainer, movie));
 
   // Отрисовываем блок с большим количеством комментариев фильмов
   const mostCommentedList = new ExtraContainerView(EXTRA_BLOCK_TITLE.MOST_COMMENTED);
   render(boardComponent.getElement(), mostCommentedList.getElement());
   const mostCommentedContainer = mostCommentedList.getElement().querySelector(`.films-list__container`);
-  movies
+  boardFilms
     .sort((a, b) => b.comments.length - a.comments.length)
     .slice(0, MOVIES_AMOUNT.MOST_COMMENTED)
-    .forEach((movie) => render(mostCommentedContainer, new FilmCardView(movie).getElement()));
+    .forEach((movie) => renderFilm(mostCommentedContainer, movie));
+};
 
-  // Отрисовываем футер
-  const footerStatictsNode = document.querySelector(`.footer__statistics`);
-  render(footerStatictsNode, new FooterStatsView(movies.length).getElement());
-}
-
+render(siteHeaderNode, new UserRankView(user).getElement());
+render(siteMainNode, new SiteMenuView(filters).getElement(), RenderPosition.AFTERBEGIN);
+render(siteMainNode, new SortView().getElement());
+renderBoard(siteMainNode, movies);
+render(footerStatictsNode, new FooterStatsView(movies.length).getElement());
