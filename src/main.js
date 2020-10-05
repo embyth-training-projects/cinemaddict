@@ -37,6 +37,30 @@ const renderFilm = (filmListContainer, film) => {
   const filmComponent = new FilmCardView(film);
   const filmDetailsComponent = new FilmDetailsView(film);
 
+  const showFilmDetails = () => {
+    document.body.appendChild(filmDetailsComponent.getElement());
+  };
+
+  const removeFilmDetails = () => {
+    document.body.removeChild(filmDetailsComponent.getElement());
+  };
+
+  filmComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, () => {
+    showFilmDetails();
+  });
+
+  filmComponent.getElement().querySelector(`.film-card__title`).addEventListener(`click`, () => {
+    showFilmDetails();
+  });
+
+  filmComponent.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, () => {
+    showFilmDetails();
+  });
+
+  filmDetailsComponent.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, () => {
+    removeFilmDetails();
+  });
+
   render(filmListContainer, filmComponent.getElement());
 };
 
