@@ -1,16 +1,18 @@
 // Подключаем необходимые компоненты
-import {createUserRankTemplate} from './view/user-rank';
-import {createSiteMenuTemplate} from './view/site-menu';
-import {createFilmsContainerTemplate} from './view/film-container';
-import {createExtraFilmContainerTemplate} from './view/extra-container';
-import {createMovieCardTemplate} from './view/movie-card';
-import {createShowMoreButtonTemplate} from './view/show-more-button';
-// import {createMovieDetailsTemplate} from './view/movie-details';
-import {createFooterStatsTemplate} from './view/footer-stats';
+import UserRankView from './view/user-rank';
+import SiteMenuView from './view/site-menu';
+import SortView from './view/sort';
+import BoardView from './view/board';
+import FilmsListView from './view/films-list';
+import ExtraContainerView from './view/extra-container';
+import FilmCardView from './view/movie-card';
+import ShowMoreButtonView from './view/show-more-button';
+import FilmDetailsView from './view/movie-details';
+import FooterStatsView from './view/footer-stats';
 import {generateMovie} from './mock/movie';
 import {generateFilter} from './mock/filter';
 import {generateUser} from './mock/user';
-import {renderTemplate} from './utils';
+import {RenderPosition, renderElement} from './utils';
 
 // Количество карточек фильмов в блоках
 const MOVIES_AMOUNT = {
@@ -31,70 +33,72 @@ const movies = new Array(MOVIES_AMOUNT.TOTAL).fill().map(generateMovie);
 const filters = generateFilter(movies);
 const user = generateUser();
 
-// Функция получения элемента контейнера по заголовку
-const getExtraListContainerNode = (title) => {
-  const extraBlockNode = Array.from(document.querySelectorAll(`.films-list--extra`))
-    .filter((el) => el.innerText.includes(title))[0];
-  return extraBlockNode.querySelector(`.films-list__container`);
-};
-
 // Отрисовываем информацию о пользователе
 const siteHeaderNode = document.querySelector(`.header`);
-renderTemplate(siteHeaderNode, createUserRankTemplate(user));
+renderElement(siteHeaderNode, new UserRankView(user).getElement(), RenderPosition.BEFOREEND);
 
 // Отрисовываем элементы сортировки и фильтры
 const siteMainNode = document.querySelector(`.main`);
-renderTemplate(siteMainNode, createSiteMenuTemplate(filters));
-renderTemplate(siteMainNode, createFilmsContainerTemplate());
+renderElement(siteMainNode, new SiteMenuView(filters).getElement(), RenderPosition.BEFOREEND);
+renderElement(siteMainNode, new SortView().getElement(), RenderPosition.BEFOREEND);
+
+const boardComponent = new BoardView();
+renderElement(siteMainNode, boardComponent.getElement(), RenderPosition.BEFOREEND);
+
+const filmsListComponent = new FilmsListView();
+renderElement(boardComponent.getElement(), filmsListComponent.getElement(), RenderPosition.BEFOREEND);
 
 // Отрисовываем карточки фильмов
-const filmsListNode = siteMainNode.querySelector(`.films-list__container`);
+const filmsContainer = filmsListComponent.getElement().querySelector(`.films-list__container`);
 movies
   .slice(0, MOVIES_AMOUNT.PER_STEP)
-  .forEach((movie) => renderTemplate(filmsListNode, createMovieCardTemplate(movie)));
+  .forEach((movie) => renderElement(filmsContainer, new FilmCardView(movie).getElement(), RenderPosition.BEFOREEND));
 
 // Отрисовываем кнопку 'Show More' по надобности
 if (movies.length > MOVIES_AMOUNT.PER_STEP) {
+  const showMoreButtonComponent = new ShowMoreButtonView();
   let renderedMoviesCount = MOVIES_AMOUNT.PER_STEP;
 
-  const filmsContainerNode = siteMainNode.querySelector(`.films-list`);
-  renderTemplate(filmsContainerNode, createShowMoreButtonTemplate());
+  renderElement(filmsListComponent.getElement(), showMoreButtonComponent.getElement(), RenderPosition.BEFOREEND);
 
-  const showMoreButton = document.querySelector(`.films-list__show-more`);
-  showMoreButton.addEventListener(`click`, (evt) => {
+  showMoreButtonComponent.getElement().addEventListener(`click`, (evt) => {
     evt.preventDefault();
 
     movies
       .slice(renderedMoviesCount, renderedMoviesCount + MOVIES_AMOUNT.PER_STEP)
-      .forEach((movie) => renderTemplate(filmsListNode, createMovieCardTemplate(movie)));
+      .forEach((movie) => renderElement(filmsContainer, new FilmCardView(movie).getElement(), RenderPosition.BEFOREEND));
 
     renderedMoviesCount += MOVIES_AMOUNT.PER_STEP;
 
     if (renderedMoviesCount >= movies.length) {
-      showMoreButton.remove();
+      showMoreButtonComponent.getElement().remove();
+      showMoreButtonComponent.removeElement();
     }
   });
 }
 
 // Отрисовываем дополнительные блоки
-const filmsParentNode = siteMainNode.querySelector(`.films`);
 // Отрисовываем блок с высшем рейтингом фильмов
-renderTemplate(filmsParentNode, createExtraFilmContainerTemplate(EXTRA_BLOCK_TITLE.TOP_RATED));
+const topRatedList = new ExtraContainerView(EXTRA_BLOCK_TITLE.TOP_RATED);
+renderElement(boardComponent.getElement(), topRatedList.getElement(), RenderPosition.BEFOREEND);
+const topRatedContainer = topRatedList.getElement().querySelector(`.films-list__container`);
 movies
   .sort((a, b) => b.filmInfo.totalRating - a.filmInfo.totalRating)
   .slice(0, MOVIES_AMOUNT.TOP_RATED)
-  .forEach((movie) => renderTemplate(getExtraListContainerNode(EXTRA_BLOCK_TITLE.TOP_RATED), createMovieCardTemplate(movie)));
+  .forEach((movie) => renderElement(topRatedContainer, new FilmCardView(movie).getElement(), RenderPosition.BEFOREEND));
 
 // Отрисовываем блок с большим количеством комментариев фильмов
-renderTemplate(filmsParentNode, createExtraFilmContainerTemplate(EXTRA_BLOCK_TITLE.MOST_COMMENTED));
+const mostCommentedList = new ExtraContainerView(EXTRA_BLOCK_TITLE.MOST_COMMENTED);
+renderElement(boardComponent.getElement(), mostCommentedList.getElement(), RenderPosition.BEFOREEND);
+const mostCommentedContainer = mostCommentedList.getElement().querySelector(`.films-list__container`);
 movies
   .sort((a, b) => b.comments.length - a.comments.length)
   .slice(0, MOVIES_AMOUNT.MOST_COMMENTED)
-  .forEach((movie) => renderTemplate(getExtraListContainerNode(EXTRA_BLOCK_TITLE.MOST_COMMENTED), createMovieCardTemplate(movie)));
+  .forEach((movie) => renderElement(mostCommentedContainer, new FilmCardView(movie).getElement(), RenderPosition.BEFOREEND));
 
 // Отрисовываем футер
 const footerStatictsNode = document.querySelector(`.footer__statistics`);
-renderTemplate(footerStatictsNode, createFooterStatsTemplate(movies.length));
+renderElement(footerStatictsNode, new FooterStatsView(movies.length).getElement(), RenderPosition.BEFOREEND);
 
 // Отрисовываем попап с полной информацией о фильме
-// renderComponent(document.body, createMovieDetailsTemplate(movies[0]));
+renderElement(document.body, new FilmDetailsView(movies[0]).getElement(), RenderPosition.BEFOREEND);

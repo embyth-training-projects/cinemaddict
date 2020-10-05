@@ -1,4 +1,5 @@
-// Функция перевода даты в нужный нам формат
+import {createElement} from '../utils';
+
 const getFormattedReleaseDate = (date) => {
   let day = date.getDate();
   if (day < 10) {
@@ -11,12 +12,10 @@ const getFormattedReleaseDate = (date) => {
   return `${day} ${month} ${year}`;
 };
 
-// Функция создания шаблона жанра
 const createGenreItemTemplate = (genre) => {
   return `<span class="film-details__genre">${genre}</span>`;
 };
 
-// Функция создания шаблона комментария
 const createCommentItemTemplate = (commentItem) => {
   const {emoji, date, author, comment} = commentItem;
 
@@ -39,8 +38,7 @@ const createCommentItemTemplate = (commentItem) => {
   );
 };
 
-// Фунция создания шаблона подробной информации о фильме (попап)
-export const createMovieDetailsTemplate = (movie) => {
+const createFilmDetailsTemplate = (movie) => {
   const {comments} = movie;
   const {filmInfo: {title, totalRating, poster, runtime, description, release, genres, writers, actors, ageRating, alternativeTitle, director}} = movie;
   const {userDetails: {watchlist, favorite, alreadyWatched}} = movie;
@@ -181,3 +179,26 @@ export const createMovieDetailsTemplate = (movie) => {
     </section>`
   );
 };
+
+export default class FilmDetails {
+  constructor(movie) {
+    this._movie = movie;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmDetailsTemplate(this._movie);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

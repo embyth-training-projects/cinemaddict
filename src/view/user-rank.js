@@ -1,4 +1,5 @@
 import {RANKS} from '../const';
+import {createElement} from '../utils';
 
 // Функция получения звания пользователя
 const getUserRank = (moviesViewed) => {
@@ -24,7 +25,7 @@ const getUserRank = (moviesViewed) => {
 };
 
 // Фунция создания шаблона звания пользователя
-export const createUserRankTemplate = (user) => {
+const createUserRankTemplate = (user) => {
   const {moviesViewed, avatar} = user;
   const userRank = getUserRank(moviesViewed);
 
@@ -35,3 +36,26 @@ export const createUserRankTemplate = (user) => {
     </section>`
   );
 };
+
+export default class UserRank {
+  constructor(user) {
+    this._user = user;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createUserRankTemplate(this._user);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

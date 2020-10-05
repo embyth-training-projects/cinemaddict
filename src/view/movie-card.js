@@ -1,4 +1,5 @@
-// Функция проверки длины описания фильма
+import {createElement} from '../utils';
+
 const checkDescriptionLength = (description) => {
   const MAX_DESCRIPTION_LENGTH = 140;
 
@@ -9,11 +10,9 @@ const checkDescriptionLength = (description) => {
   return description;
 };
 
-// Получаем название класса для активной кнопки
 const isControlItemActive = (item) => item ? `film-card__controls-item--active` : ``;
 
-// Фунция создания шаблона карточки фильма
-export const createMovieCardTemplate = (movie) => {
+const createFilmCardTemplate = (movie) => {
   const {comments} = movie;
   const {filmInfo: {title, totalRating, poster, runtime, description, release, genres}} = movie;
   const {userDetails: {watchlist, favorite, alreadyWatched}} = movie;
@@ -40,3 +39,26 @@ export const createMovieCardTemplate = (movie) => {
     </article>`
   );
 };
+
+export default class FilmCard {
+  constructor(movie) {
+    this._movie = movie;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmCardTemplate(this._movie);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

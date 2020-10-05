@@ -1,21 +1,21 @@
 import {createElement} from '../utils';
 
-const createFooterStatsTemplate = (moviesAmount) => {
+const createFilmsListTemplate = () => {
   return (
-    `<section class="footer__statistics">
-      <p>${moviesAmount} movies inside</p>
+    `<section class="films-list">
+      <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
+      <div class="films-list__container"></div>
     </section>`
   );
 };
 
-export default class FooterStats {
-  constructor(moviesAmount) {
-    this._moviesAmount = moviesAmount;
+export default class FilmsList {
+  constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createFooterStatsTemplate(this._moviesAmount);
+    return createFilmsListTemplate();
   }
 
   getElement() {
