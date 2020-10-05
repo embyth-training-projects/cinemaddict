@@ -45,20 +45,32 @@ const renderFilm = (filmListContainer, film) => {
     document.body.removeChild(filmDetailsComponent.getElement());
   };
 
+  const onEscKeyDown = (evt) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      evt.preventDefault();
+      removeFilmDetails();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
   filmComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, () => {
     showFilmDetails();
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   filmComponent.getElement().querySelector(`.film-card__title`).addEventListener(`click`, () => {
     showFilmDetails();
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   filmComponent.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, () => {
     showFilmDetails();
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   filmDetailsComponent.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, () => {
     removeFilmDetails();
+    document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
   render(filmListContainer, filmComponent.getElement());
