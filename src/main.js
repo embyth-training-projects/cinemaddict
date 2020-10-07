@@ -13,7 +13,7 @@ import FooterStatsView from './view/footer-stats';
 import {generateMovie} from './mock/movie';
 import {generateFilter} from './mock/filter';
 import {generateUser} from './mock/user';
-import {RenderPosition, render, remove} from './utils/render';
+import {RenderPosition, render, remove, addChild, deleteChild} from './utils/render';
 
 // Количество карточек фильмов в блоках
 const MOVIES_AMOUNT = {
@@ -43,11 +43,11 @@ const renderFilm = (filmListContainer, film) => {
   const filmDetailsComponent = new FilmDetailsView(film);
 
   const showFilmDetails = () => {
-    document.body.appendChild(filmDetailsComponent.getElement());
+    addChild(siteMainNode, filmDetailsComponent);
   };
 
   const removeFilmDetails = () => {
-    document.body.removeChild(filmDetailsComponent.getElement());
+    deleteChild(filmDetailsComponent);
   };
 
   const onEscKeyDown = (evt) => {

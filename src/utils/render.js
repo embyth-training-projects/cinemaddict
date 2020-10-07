@@ -39,6 +39,36 @@ export const createElement = (template) => {
   return newElement.firstElementChild;
 };
 
+export const addChild = (parent, child) => {
+  if (parent instanceof Abstract) {
+    parent = parent.getElement();
+  }
+
+  if (child instanceof Abstract) {
+    child = child.getElement();
+  }
+
+  if (!parent || !child) {
+    throw new Error(`Can't add child.`);
+  }
+
+  parent.appendChild(child);
+};
+
+export const deleteChild = (child) => {
+  if (child instanceof Abstract) {
+    child = child.getElement();
+  }
+
+  const parent = child.parentElement;
+
+  if (!parent || !child) {
+    throw new Error(`Can't remove child.`);
+  }
+
+  parent.removeChild(child);
+};
+
 export const remove = (component) => {
   if (!(component instanceof Abstract)) {
     throw new Error(`Can remove only components`);
