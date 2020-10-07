@@ -19,4 +19,8 @@ export default class ExtraContainer extends AbstarctView {
   getTemplate() {
     return createExtraFilmContainerTemplate(this._title);
   }
+
+  getContainer() {
+    return this.getElement().querySelector(`.films-list__container`);
+  }
 }

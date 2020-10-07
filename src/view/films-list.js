@@ -13,4 +13,8 @@ export default class FilmsList extends AbstarctView {
   getTemplate() {
     return createFilmsListTemplate();
   }
+
+  getContainer() {
+    return this.getElement().querySelector(`.films-list__container`);
+  }
 }
