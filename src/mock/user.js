@@ -1,4 +1,4 @@
-import {getRandomInteger, getRandomElement} from '../utils';
+import {getRandomInteger, getRandomElement} from '../utils/common';
 import {AVATAR_PATHS} from '../const';
 
 export const generateUser = () => {

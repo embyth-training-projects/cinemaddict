@@ -13,7 +13,7 @@ import FooterStatsView from './view/footer-stats';
 import {generateMovie} from './mock/movie';
 import {generateFilter} from './mock/filter';
 import {generateUser} from './mock/user';
-import {RenderPosition, render} from './utils';
+import {RenderPosition, render, remove} from './utils/render';
 
 // Количество карточек фильмов в блоках
 const MOVIES_AMOUNT = {
@@ -68,21 +68,21 @@ const renderFilm = (filmListContainer, film) => {
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
-  render(filmListContainer, filmComponent.getElement());
+  render(filmListContainer, filmComponent);
 };
 
 const renderBoard = (boardContainer, boardFilms) => {
   const boardComponent = new BoardView();
   const filmsListComponent = new FilmsListView();
 
-  render(boardContainer, boardComponent.getElement());
+  render(boardContainer, boardComponent);
 
   if (boardFilms.length === 0) {
-    render(boardComponent.getElement(), new NoDataView().getElement());
+    render(boardComponent, new NoDataView());
     return;
   }
 
-  render(boardComponent.getElement(), filmsListComponent.getElement(), RenderPosition.AFTERBEGIN);
+  render(boardComponent, filmsListComponent, RenderPosition.AFTERBEGIN);
 
   const filmsContainer = filmsListComponent.getElement().querySelector(`.films-list__container`);
   boardFilms
@@ -93,7 +93,7 @@ const renderBoard = (boardContainer, boardFilms) => {
     const showMoreButtonComponent = new ShowMoreButtonView();
     let renderedMoviesCount = MOVIES_AMOUNT.PER_STEP;
 
-    render(filmsListComponent.getElement(), showMoreButtonComponent.getElement());
+    render(filmsListComponent, showMoreButtonComponent);
 
     showMoreButtonComponent.setClickHandler(() => {
       boardFilms
@@ -103,15 +103,14 @@ const renderBoard = (boardContainer, boardFilms) => {
       renderedMoviesCount += MOVIES_AMOUNT.PER_STEP;
 
       if (renderedMoviesCount >= boardFilms.length) {
-        showMoreButtonComponent.getElement().remove();
-        showMoreButtonComponent.removeElement();
+        remove(showMoreButtonComponent);
       }
     });
   }
 
   // Отрисовываем блок с высшем рейтингом фильмов
   const topRatedList = new ExtraContainerView(EXTRA_BLOCK_TITLE.TOP_RATED);
-  render(boardComponent.getElement(), topRatedList.getElement());
+  render(boardComponent, topRatedList);
   const topRatedContainer = topRatedList.getElement().querySelector(`.films-list__container`);
   boardFilms
     .sort((a, b) => b.filmInfo.totalRating - a.filmInfo.totalRating)
@@ -120,7 +119,7 @@ const renderBoard = (boardContainer, boardFilms) => {
 
   // Отрисовываем блок с большим количеством комментариев фильмов
   const mostCommentedList = new ExtraContainerView(EXTRA_BLOCK_TITLE.MOST_COMMENTED);
-  render(boardComponent.getElement(), mostCommentedList.getElement());
+  render(boardComponent, mostCommentedList);
   const mostCommentedContainer = mostCommentedList.getElement().querySelector(`.films-list__container`);
   boardFilms
     .sort((a, b) => b.comments.length - a.comments.length)
@@ -128,8 +127,8 @@ const renderBoard = (boardContainer, boardFilms) => {
     .forEach((movie) => renderFilm(mostCommentedContainer, movie));
 };
 
-render(siteHeaderNode, new UserRankView(user).getElement());
-render(siteMainNode, new SiteMenuView(filters).getElement(), RenderPosition.AFTERBEGIN);
-render(siteMainNode, new SortView().getElement());
+render(siteHeaderNode, new UserRankView(user));
+render(siteMainNode, new SiteMenuView(filters), RenderPosition.AFTERBEGIN);
+render(siteMainNode, new SortView());
 renderBoard(siteMainNode, movies);
-render(footerStatictsNode, new FooterStatsView(movies.length).getElement());
+render(footerStatictsNode, new FooterStatsView(movies.length));

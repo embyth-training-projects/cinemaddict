@@ -1,5 +1,5 @@
 import {TITLES, POSTERS, SENTENCES, EMOTIONS, AUTHORS, AGE_RATINGS, DIRECTORS, WRITERS, ACTORS, COUNTRIES, GENRES} from '../const';
-import {getRandomInteger, generateDate, getRandomElement} from '../utils';
+import {getRandomInteger, generateDate, getRandomElement} from '../utils/common';
 
 // Функция генерации описания фильма случайным образом
 const generateDescription = () => {
