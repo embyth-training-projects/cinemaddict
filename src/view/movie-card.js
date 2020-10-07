@@ -1,4 +1,4 @@
-import {createElement} from '../utils';
+import AbstarctView from './abstract';
 
 const checkDescriptionLength = (description) => {
   const MAX_DESCRIPTION_LENGTH = 140;
@@ -40,25 +40,14 @@ const createFilmCardTemplate = (movie) => {
   );
 };
 
-export default class FilmCard {
+export default class FilmCard extends AbstarctView {
   constructor(movie) {
+    super();
+
     this._movie = movie;
-    this._element = null;
   }
 
   getTemplate() {
     return createFilmCardTemplate(this._movie);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

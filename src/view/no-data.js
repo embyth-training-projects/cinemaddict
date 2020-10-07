@@ -1,4 +1,4 @@
-import {createElement} from '../utils';
+import AbstarctView from './abstract';
 
 const createNoDataTemplate = () => {
   return (
@@ -8,24 +8,8 @@ const createNoDataTemplate = () => {
   );
 };
 
-export default class NoData {
-  constructor() {
-    this._element = null;
-  }
-
+export default class NoData extends AbstarctView {
   getTemplate() {
     return createNoDataTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

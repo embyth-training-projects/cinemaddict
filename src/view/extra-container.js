@@ -1,4 +1,4 @@
-import {createElement} from '../utils';
+import AbstarctView from './abstract';
 
 const createExtraFilmContainerTemplate = (heading) => {
   return (
@@ -9,25 +9,14 @@ const createExtraFilmContainerTemplate = (heading) => {
   );
 };
 
-export default class ExtraContainer {
+export default class ExtraContainer extends AbstarctView {
   constructor(title) {
+    super();
+
     this._title = title;
-    this._element = null;
   }
 
   getTemplate() {
     return createExtraFilmContainerTemplate(this._title);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

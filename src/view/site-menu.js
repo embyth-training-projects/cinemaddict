@@ -1,4 +1,4 @@
-import {createElement} from '../utils';
+import AbstarctView from './abstract';
 
 const createFilterItemTemplate = (filter) => {
   const {title, amount} = filter;
@@ -27,25 +27,14 @@ const createSiteMenuTemplate = (filters) => {
   );
 };
 
-export default class SiteMenu {
+export default class SiteMenu extends AbstarctView {
   constructor(filters) {
+    super();
+
     this._filters = filters;
-    this._element = null;
   }
 
   getTemplate() {
     return createSiteMenuTemplate(this._filters);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

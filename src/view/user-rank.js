@@ -1,5 +1,5 @@
 import {RANKS} from '../const';
-import {createElement} from '../utils';
+import AbstarctView from './abstract';
 
 // Функция получения звания пользователя
 const getUserRank = (moviesViewed) => {
@@ -37,25 +37,14 @@ const createUserRankTemplate = (user) => {
   );
 };
 
-export default class UserRank {
+export default class UserRank extends AbstarctView {
   constructor(user) {
+    super();
+
     this._user = user;
-    this._element = null;
   }
 
   getTemplate() {
     return createUserRankTemplate(this._user);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
