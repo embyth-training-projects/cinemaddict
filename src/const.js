@@ -108,3 +108,15 @@ export const AVATAR_PATHS = [
 ];
 
 export const RANKS = [`novice`, `fan`, `movie buff`];
+
+export const MOVIES_AMOUNT = {
+  TOTAL: 20,
+  PER_STEP: 5,
+  TOP_RATED: 2,
+  MOST_COMMENTED: 2,
+};
+
+export const EXTRA_BLOCK_TITLE = {
+  TOP_RATED: `Top rated`,
+  MOST_COMMENTED: `Most commented`
+};
