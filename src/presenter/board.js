@@ -6,6 +6,7 @@ import FilmPresenter from '../presenter/movie';
 import ExtraBoardPresenter from './extra-board';
 import ShowMoreButtonView from '../view/show-more-button';
 import {RenderPosition, render, remove} from '../utils/render';
+import {updateItem} from '../utils/common';
 import {sortByDate, sortByRating, sortByComments} from '../utils/sort';
 import {MOVIES_AMOUNT, SortType} from '../const';
 
@@ -23,6 +24,7 @@ export default class Board {
     this._showMoreButtonComponent = new ShowMoreButtonView();
     this._extraBoardPresenter = new ExtraBoardPresenter(this._boardComponent);
 
+    this._handleFilmChange = this._handleFilmChange.bind(this);
     this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
@@ -33,6 +35,12 @@ export default class Board {
 
     this._renderSort();
     this._renderBoard();
+  }
+
+  _handleFilmChange(updatedFilm) {
+    this._boardFilms = updateItem(this._boardFilms, updatedFilm);
+    this._sourcedBoardFilms = updateItem(this._sourcedBoardFilms, updatedFilm);
+    this._filmPresenter[updatedFilm.id].init(updatedFilm);
   }
 
   _sortFilms(sortType) {
