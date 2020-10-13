@@ -39,9 +39,7 @@ const createCommentItemTemplate = (commentItem) => {
 };
 
 const createFilmDetailsTemplate = (movie) => {
-  const {comments} = movie;
-  const {filmInfo: {title, totalRating, poster, runtime, description, release, genres, writers, actors, ageRating, alternativeTitle, director}} = movie;
-  const {userDetails: {watchlist, favorite, alreadyWatched}} = movie;
+  const {title, totalRating, poster, runtime, description, release, genres, writers, actors, ageRating, alternativeTitle, director, comments, watchlist, favorite, alreadyWatched} = movie;
 
   const writersToString = writers.join(`, `);
   const actorsToString = actors.join(`, `);

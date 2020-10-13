@@ -13,9 +13,7 @@ const checkDescriptionLength = (description) => {
 const isControlItemActive = (item) => item ? `film-card__controls-item--active` : ``;
 
 const createFilmCardTemplate = (movie) => {
-  const {comments} = movie;
-  const {filmInfo: {title, totalRating, poster, runtime, description, release, genres}} = movie;
-  const {userDetails: {watchlist, favorite, alreadyWatched}} = movie;
+  const {title, totalRating, poster, runtime, description, release, genres, comments, watchlist, favorite, alreadyWatched} = movie;
 
   const releaseYear = release.date.getFullYear();
 

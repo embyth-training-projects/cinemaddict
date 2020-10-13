@@ -120,26 +120,22 @@ const generateGenres = () => {
 export const generateMovie = () => {
   return {
     comments: generateComments(),
-    filmInfo: {
-      id: generateId(),
-      title: getRandomElement(TITLES),
-      alternativeTitle: getRandomElement(TITLES),
-      poster: getRandomElement(POSTERS),
-      description: generateDescription(),
-      totalRating: generateRating(),
-      ageRating: getRandomElement(AGE_RATINGS),
-      director: getRandomElement(DIRECTORS),
-      writers: generateWriters(),
-      actors: generateActors(),
-      release: generateRelease(),
-      runtime: generateRuntime(),
-      genres: generateGenres(),
-    },
-    userDetails: {
-      watchlist: Boolean(getRandomInteger(0, 1)),
-      favorite: Boolean(getRandomInteger(0, 1)),
-      alreadyWatched: Boolean(getRandomInteger(0, 1)),
-      watchingDate: generateDate(),
-    }
+    id: generateId(),
+    title: getRandomElement(TITLES),
+    alternativeTitle: getRandomElement(TITLES),
+    poster: getRandomElement(POSTERS),
+    description: generateDescription(),
+    totalRating: generateRating(),
+    ageRating: getRandomElement(AGE_RATINGS),
+    director: getRandomElement(DIRECTORS),
+    writers: generateWriters(),
+    actors: generateActors(),
+    release: generateRelease(),
+    runtime: generateRuntime(),
+    genres: generateGenres(),
+    watchlist: Boolean(getRandomInteger(0, 1)),
+    favorite: Boolean(getRandomInteger(0, 1)),
+    alreadyWatched: Boolean(getRandomInteger(0, 1)),
+    watchingDate: generateDate(),
   };
 };

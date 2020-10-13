@@ -1,8 +1,8 @@
 // Мапа где ключи - названия фильтров, а значения - функции-счетчики
 const movieToFilterMap = {
-  watchlist: (movies) => movies.filter((movie) => movie.userDetails.watchlist).length,
-  history: (movies) => movies.filter((movie) => movie.userDetails.alreadyWatched).length,
-  favorites: (movies) => movies.filter((movie) => movie.userDetails.favorite).length,
+  watchlist: (movies) => movies.filter((movie) => movie.watchlist).length,
+  history: (movies) => movies.filter((movie) => movie.alreadyWatched).length,
+  favorites: (movies) => movies.filter((movie) => movie.favorite).length,
 };
 
 // Функция-генератор фильтров
