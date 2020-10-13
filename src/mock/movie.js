@@ -133,9 +133,9 @@ export const generateMovie = () => {
     release: generateRelease(),
     runtime: generateRuntime(),
     genres: generateGenres(),
-    watchlist: Boolean(getRandomInteger(0, 1)),
-    favorite: Boolean(getRandomInteger(0, 1)),
-    alreadyWatched: Boolean(getRandomInteger(0, 1)),
+    isWatchlisted: Boolean(getRandomInteger(0, 1)),
+    isFavorite: Boolean(getRandomInteger(0, 1)),
+    isWatched: Boolean(getRandomInteger(0, 1)),
     watchingDate: generateDate(),
   };
 };
