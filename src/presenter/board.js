@@ -14,6 +14,7 @@ export default class Board {
     this._boardContainer = boardContainer;
     this._renderedMoviesCount = MOVIES_AMOUNT.PER_STEP;
     this._currentSortType = SortType.DEFAULT;
+    this._filmPresenter = {};
 
     this._boardComponent = new BoardView();
     this._sortComponent = new SortView();
@@ -69,6 +70,7 @@ export default class Board {
   _renderFilm(container, film) {
     const filmPresenter = new FilmPresenter(container);
     filmPresenter.init(film);
+    this._filmPresenter[film.filmInfo.id] = filmPresenter;
   }
 
   _renderFilms(from, to) {
@@ -97,12 +99,13 @@ export default class Board {
   }
 
   _clearFilmsList() {
-    remove(this._filmsListComponent);
+    Object
+      .values(this._filmPresenter)
+      .forEach((presenter) => presenter.destroy());
     this._renderedMoviesCount = MOVIES_AMOUNT.PER_STEP;
   }
 
   _renderFilmsList() {
-    render(this._boardComponent, this._filmsListComponent, RenderPosition.AFTERBEGIN);
     this._renderFilms(0, Math.min(this._boardFilms.length, MOVIES_AMOUNT.PER_STEP));
 
     if (this._boardFilms.length > MOVIES_AMOUNT.PER_STEP) {
@@ -138,8 +141,10 @@ export default class Board {
 
     if (this._boardFilms.length === 0) {
       this._renderNoData();
+      return;
     }
 
+    render(this._boardComponent, this._filmsListComponent, RenderPosition.AFTERBEGIN);
     this._renderFilmsList();
     this._renderExtraList(EXTRA_BLOCK_TITLE.TOP_RATED);
     this._renderExtraList(EXTRA_BLOCK_TITLE.MOST_COMMENTED);
