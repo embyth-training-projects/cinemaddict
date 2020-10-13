@@ -3,10 +3,9 @@ import SortView from '../view/sort';
 import FilmsListView from '../view/films-list';
 import NoDataView from '../view/no-data';
 import ExtraContainerView from '../view/extra-container';
-import FilmCardView from '../view/movie-card';
+import FilmPresenter from '../presenter/movie';
 import ShowMoreButtonView from '../view/show-more-button';
-import FilmDetailsView from '../view/movie-details';
-import {RenderPosition, render, remove, addChild, deleteChild} from '../utils/render';
+import {RenderPosition, render, remove} from '../utils/render';
 import {sortByDate, sortByRating, sortByComments} from '../utils/sort';
 import {MOVIES_AMOUNT, SortType, EXTRA_BLOCK_TITLE} from '../const';
 
@@ -68,42 +67,14 @@ export default class Board {
   }
 
   _renderFilm(container, film) {
-    const filmComponent = new FilmCardView(film);
-    const filmDetailsComponent = new FilmDetailsView(film);
-
-    const showFilmDetails = () => {
-      addChild(this._boardContainer, filmDetailsComponent);
-    };
-
-    const removeFilmDetails = () => {
-      deleteChild(filmDetailsComponent);
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        evt.preventDefault();
-        removeFilmDetails();
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    filmComponent.openDetailsClickHandler(() => {
-      showFilmDetails();
-      document.addEventListener(`keydown`, onEscKeyDown);
-    });
-
-    filmDetailsComponent.closeDetailsClickHandler(() => {
-      removeFilmDetails();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    });
-
-    render(container.getContainer(), filmComponent);
+    const filmPresenter = new FilmPresenter(container);
+    filmPresenter.init(film);
   }
 
   _renderFilms(from, to) {
     this._boardFilms
       .slice(from, to)
-      .forEach((film) => this._renderFilm(this._filmsListComponent, film));
+      .forEach((film) => this._renderFilm(this._filmsListComponent.getContainer(), film));
   }
 
   _renderNoData() {
@@ -151,13 +122,13 @@ export default class Board {
         slicedFilms
           .sort(sortByRating)
           .slice(0, MOVIES_AMOUNT.TOP_RATED)
-          .forEach((film) => this._renderFilm(extraListComponent, film));
+          .forEach((film) => this._renderFilm(extraListComponent.getContainer(), film));
         break;
       case EXTRA_BLOCK_TITLE.MOST_COMMENTED:
         slicedFilms
           .sort(sortByComments)
           .slice(0, MOVIES_AMOUNT.MOST_COMMENTED)
-          .forEach((film) => this._renderFilm(extraListComponent, film));
+          .forEach((film) => this._renderFilm(extraListComponent.getContainer(), film));
         break;
     }
   }
