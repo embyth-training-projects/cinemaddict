@@ -3,12 +3,25 @@ import SortView from '../view/sort';
 import FilmsListView from '../view/films-list';
 import NoDataView from '../view/no-data';
 import FilmPresenter from '../presenter/movie';
-import ExtraBoardPresenter from './extra-board';
+import ExtraContainerView from '../view/extra-container';
 import ShowMoreButtonView from '../view/show-more-button';
 import {RenderPosition, render, remove} from '../utils/render';
 import {updateItem} from '../utils/common';
 import {sortByDate, sortByRating, sortByComments} from '../utils/sort';
 import {MOVIES_AMOUNT, SortType} from '../const';
+
+const extraListType = {
+  TOP_RATED: {
+    TITLE: `Top rated`,
+    AMOUNT: MOVIES_AMOUNT.TOP_RATED,
+    SORT: sortByRating,
+  },
+  MOST_COMMENTED: {
+    TITLE: `Most commented`,
+    AMOUNT: MOVIES_AMOUNT.MOST_COMMENTED,
+    SORT: sortByComments,
+  },
+};
 
 export default class Board {
   constructor(boardContainer) {
@@ -16,13 +29,14 @@ export default class Board {
     this._renderedMoviesCount = 0;
     this._currentSortType = SortType.DEFAULT;
     this._filmPresenter = {};
+    this._filmTopRatedPresenter = {};
+    this._filmMostCommentedPresenter = {};
 
     this._boardComponent = new BoardView();
     this._sortComponent = new SortView();
     this._filmsListComponent = new FilmsListView();
     this._noDataComponent = new NoDataView();
     this._showMoreButtonComponent = new ShowMoreButtonView();
-    this._extraBoardPresenter = new ExtraBoardPresenter(this._boardComponent);
 
     this._handleFilmChange = this._handleFilmChange.bind(this);
     this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
@@ -40,7 +54,18 @@ export default class Board {
   _handleFilmChange(updatedFilm) {
     this._boardFilms = updateItem(this._boardFilms, updatedFilm);
     this._sourcedBoardFilms = updateItem(this._sourcedBoardFilms, updatedFilm);
-    this._filmPresenter[updatedFilm.id].init(updatedFilm);
+
+    if (Object.keys(this._filmPresenter).includes(updatedFilm.id.toString())) {
+      this._filmPresenter[updatedFilm.id].init(updatedFilm);
+    }
+
+    if (Object.keys(this._filmTopRatedPresenter).includes(updatedFilm.id.toString())) {
+      this._filmTopRatedPresenter[updatedFilm.id].init(updatedFilm);
+    }
+
+    if (Object.keys(this._filmMostCommentedPresenter).includes(updatedFilm.id.toString())) {
+      this._filmMostCommentedPresenter[updatedFilm.id].init(updatedFilm);
+    }
   }
 
   _sortFilms(sortType) {
@@ -82,6 +107,20 @@ export default class Board {
     this._filmPresenter[film.id] = filmPresenter;
   }
 
+  _renderExtraFilm(container, film, type) {
+    const filmPresenter = new FilmPresenter(container, this._handleFilmChange);
+    filmPresenter.init(film);
+
+    switch (type.TITLE) {
+      case extraListType.TOP_RATED.TITLE:
+        this._filmTopRatedPresenter[film.id] = filmPresenter;
+        break;
+      case extraListType.MOST_COMMENTED.TITLE:
+        this._filmMostCommentedPresenter[film.id] = filmPresenter;
+        break;
+    }
+  }
+
   _renderFilms(from, to) {
     this._boardFilms
       .slice(from, to)
@@ -114,12 +153,29 @@ export default class Board {
   }
 
   _renderFilmsList() {
+    render(this._boardComponent, this._filmsListComponent, RenderPosition.AFTERBEGIN);
     this._renderedMoviesCount = Math.min(this._boardFilms.length, MOVIES_AMOUNT.PER_STEP);
     this._renderFilms(0, this._renderedMoviesCount);
 
     if (this._boardFilms.length > MOVIES_AMOUNT.PER_STEP) {
       this._renderShowMoreButton();
     }
+  }
+
+  _initExtraLists(films) {
+    this._renderExtraList(extraListType.TOP_RATED, films);
+    this._renderExtraList(extraListType.MOST_COMMENTED, films);
+  }
+
+  _renderExtraList(listType, films) {
+    const slicedFilms = films.slice();
+    const extraListComponent = new ExtraContainerView(listType.TITLE);
+    render(this._boardComponent, extraListComponent);
+
+    slicedFilms
+      .sort(listType.SORT)
+      .slice(0, listType.AMOUNT)
+      .forEach((film) => this._renderExtraFilm(extraListComponent.getContainer(), film, listType));
   }
 
   _renderBoard() {
@@ -130,8 +186,7 @@ export default class Board {
       return;
     }
 
-    render(this._boardComponent, this._filmsListComponent, RenderPosition.AFTERBEGIN);
     this._renderFilmsList();
-    this._extraBoardPresenter.init(this._boardFilms);
+    this._initExtraLists(this._boardFilms);
   }
 }
