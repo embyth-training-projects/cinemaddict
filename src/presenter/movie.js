@@ -56,7 +56,7 @@ export default class Film {
   }
 
   _showFilmDetails() {
-    addChild(this._filmsListContainer, this._filmDetailsComponent);
+    addChild(document.body, this._filmDetailsComponent);
     document.addEventListener(`keydown`, this._escKeyDownHandler);
   }
 
@@ -76,7 +76,8 @@ export default class Film {
     this._showFilmDetails();
   }
 
-  _handleDetailsClose() {
+  _handleDetailsClose(film) {
+    this._changeData(film);
     this._removeFilmDetails();
   }
 

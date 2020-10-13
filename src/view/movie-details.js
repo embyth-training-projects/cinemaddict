@@ -39,7 +39,7 @@ const createCommentItemTemplate = (commentItem) => {
 };
 
 const createFilmDetailsTemplate = (movie) => {
-  const {title, totalRating, poster, runtime, description, release, genres, writers, actors, ageRating, alternativeTitle, director, comments, watchlist, favorite, alreadyWatched} = movie;
+  const {title, totalRating, poster, runtime, description, release, genres, writers, actors, ageRating, alternativeTitle, director, comments, isWatchlisted, isFavorite, isWatched} = movie;
 
   const writersToString = writers.join(`, `);
   const actorsToString = actors.join(`, `);
@@ -117,17 +117,17 @@ const createFilmDetailsTemplate = (movie) => {
           </div>
 
           <section class="film-details__controls">
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${watchlist ? `checked` : ``}>
+            <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${isWatchlisted ? `checked` : ``}>
             <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">
               Add to watchlist
             </label>
 
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${alreadyWatched ? `checked` : ``}>
+            <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${isWatched ? `checked` : ``}>
             <label for="watched" class="film-details__control-label film-details__control-label--watched">
               Already watched
             </label>
 
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${favorite ? `checked` : ``}>
+            <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${isFavorite ? `checked` : ``}>
             <label for="favorite" class="film-details__control-label film-details__control-label--favorite">
               Add to favorites
             </label>
@@ -182,21 +182,31 @@ export default class FilmDetails extends AbstarctView {
   constructor(movie) {
     super();
 
-    this._movie = movie;
+    this._data = FilmDetails.parseFilmToData(movie);
     this._clickHandler = this._clickHandler.bind(this);
   }
 
   getTemplate() {
-    return createFilmDetailsTemplate(this._movie);
+    return createFilmDetailsTemplate(this._data);
   }
 
   _clickHandler(evt) {
     evt.preventDefault();
-    this._callback.click();
+    this._callback.click(FilmDetails.parseDataToFilm(this._data));
   }
 
   closeDetailsClickHandler(callback) {
     this._callback.click = callback;
-    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._clickHandler);
+    this.getElement()
+      .querySelector(`.film-details__close-btn`)
+      .addEventListener(`click`, this._clickHandler);
+  }
+
+  static parseFilmToData(film) {
+    return Object.assign({}, film);
+  }
+
+  static parseDataToFilm(data) {
+    return Object.assign({}, data);
   }
 }
