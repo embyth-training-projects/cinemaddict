@@ -3,8 +3,9 @@ import FilmDetailsView from '../view/movie-details';
 import {render, replace, remove, addChild, deleteChild} from '../utils/render';
 
 export default class Film {
-  constructor(filmsListContainer) {
+  constructor(filmsListContainer, changeData) {
     this._filmsListContainer = filmsListContainer;
+    this._changeData = changeData;
 
     this._filmComponent = null;
     this._filmDetailsComponent = null;
@@ -12,6 +13,9 @@ export default class Film {
     this._handleDetailsOpen = this._handleDetailsOpen.bind(this);
     this._handleDetailsClose = this._handleDetailsClose.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
+    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+    this._handleWatchedClick = this._handleWatchedClick.bind(this);
+    this._handleWatchlistClick = this._handleWatchlistClick.bind(this);
   }
 
   init(film) {
@@ -24,6 +28,9 @@ export default class Film {
     this._filmDetailsComponent = new FilmDetailsView(film);
 
     this._filmComponent.openDetailsClickHandler(this._handleDetailsOpen);
+    this._filmComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._filmComponent.setWatchedClickHandler(this._handleWatchedClick);
+    this._filmComponent.setWatchlistClickHandler(this._handleWatchlistClick);
     this._filmDetailsComponent.closeDetailsClickHandler(this._handleDetailsClose);
 
     if (prevFilmComponent === null || prevFilmDetailsComponent === null) {
@@ -31,11 +38,11 @@ export default class Film {
       return;
     }
 
-    if (this._filmsListContainer.getElement().contains(prevFilmComponent.getElement())) {
+    if (this._filmsListContainer.contains(prevFilmComponent.getElement())) {
       replace(this._filmComponent, prevFilmComponent);
     }
 
-    if (this._filmsListContainer.getElement().contains(prevFilmDetailsComponent.getElement())) {
+    if (this._filmsListContainer.contains(prevFilmDetailsComponent.getElement())) {
       replace(this._filmDetailsComponent, prevFilmDetailsComponent);
     }
 
@@ -71,5 +78,41 @@ export default class Film {
 
   _handleDetailsClose() {
     this._removeFilmDetails();
+  }
+
+  _handleFavoriteClick() {
+    this._changeData(
+        Object.assign(
+            {},
+            this._film,
+            {
+              isFavorite: !this._film.isFavorite
+            }
+        )
+    );
+  }
+
+  _handleWatchedClick() {
+    this._changeData(
+        Object.assign(
+            {},
+            this._film,
+            {
+              isWatched: !this._film.isWatched
+            }
+        )
+    );
+  }
+
+  _handleWatchlistClick() {
+    this._changeData(
+        Object.assign(
+            {},
+            this._film,
+            {
+              isWatchlisted: !this._film.isWatchlisted
+            }
+        )
+    );
   }
 }

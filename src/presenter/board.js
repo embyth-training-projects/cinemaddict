@@ -77,7 +77,7 @@ export default class Board {
   }
 
   _renderFilm(container, film) {
-    const filmPresenter = new FilmPresenter(container);
+    const filmPresenter = new FilmPresenter(container, this._handleFilmChange);
     filmPresenter.init(film);
     this._filmPresenter[film.id] = filmPresenter;
   }
