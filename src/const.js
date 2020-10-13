@@ -116,11 +116,6 @@ export const MOVIES_AMOUNT = {
   MOST_COMMENTED: 2,
 };
 
-export const EXTRA_BLOCK_TITLE = {
-  TOP_RATED: `Top rated`,
-  MOST_COMMENTED: `Most commented`
-};
-
 export const SortType = {
   DEFAULT: `default`,
   DATE: `date`,

@@ -2,17 +2,17 @@ import BoardView from '../view/board';
 import SortView from '../view/sort';
 import FilmsListView from '../view/films-list';
 import NoDataView from '../view/no-data';
-import ExtraContainerView from '../view/extra-container';
 import FilmPresenter from '../presenter/movie';
+import ExtraBoardPresenter from './extra-board';
 import ShowMoreButtonView from '../view/show-more-button';
 import {RenderPosition, render, remove} from '../utils/render';
 import {sortByDate, sortByRating, sortByComments} from '../utils/sort';
-import {MOVIES_AMOUNT, SortType, EXTRA_BLOCK_TITLE} from '../const';
+import {MOVIES_AMOUNT, SortType} from '../const';
 
 export default class Board {
   constructor(boardContainer) {
     this._boardContainer = boardContainer;
-    this._renderedMoviesCount = MOVIES_AMOUNT.PER_STEP;
+    this._renderedMoviesCount = 0;
     this._currentSortType = SortType.DEFAULT;
     this._filmPresenter = {};
 
@@ -21,6 +21,7 @@ export default class Board {
     this._filmsListComponent = new FilmsListView();
     this._noDataComponent = new NoDataView();
     this._showMoreButtonComponent = new ShowMoreButtonView();
+    this._extraBoardPresenter = new ExtraBoardPresenter(this._boardComponent);
 
     this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
@@ -102,37 +103,14 @@ export default class Board {
     Object
       .values(this._filmPresenter)
       .forEach((presenter) => presenter.destroy());
-    this._renderedMoviesCount = MOVIES_AMOUNT.PER_STEP;
   }
 
   _renderFilmsList() {
-    this._renderFilms(0, Math.min(this._boardFilms.length, MOVIES_AMOUNT.PER_STEP));
+    this._renderedMoviesCount = Math.min(this._boardFilms.length, MOVIES_AMOUNT.PER_STEP);
+    this._renderFilms(0, this._renderedMoviesCount);
 
     if (this._boardFilms.length > MOVIES_AMOUNT.PER_STEP) {
       this._renderShowMoreButton();
-    }
-  }
-
-  _renderExtraList(title) {
-    const extraListComponent = new ExtraContainerView(title);
-
-    render(this._boardComponent, extraListComponent);
-
-    const slicedFilms = this._boardFilms.slice();
-
-    switch (title) {
-      case EXTRA_BLOCK_TITLE.TOP_RATED:
-        slicedFilms
-          .sort(sortByRating)
-          .slice(0, MOVIES_AMOUNT.TOP_RATED)
-          .forEach((film) => this._renderFilm(extraListComponent.getContainer(), film));
-        break;
-      case EXTRA_BLOCK_TITLE.MOST_COMMENTED:
-        slicedFilms
-          .sort(sortByComments)
-          .slice(0, MOVIES_AMOUNT.MOST_COMMENTED)
-          .forEach((film) => this._renderFilm(extraListComponent.getContainer(), film));
-        break;
     }
   }
 
@@ -146,7 +124,6 @@ export default class Board {
 
     render(this._boardComponent, this._filmsListComponent, RenderPosition.AFTERBEGIN);
     this._renderFilmsList();
-    this._renderExtraList(EXTRA_BLOCK_TITLE.TOP_RATED);
-    this._renderExtraList(EXTRA_BLOCK_TITLE.MOST_COMMENTED);
+    this._extraBoardPresenter.init(this._boardFilms);
   }
 }
