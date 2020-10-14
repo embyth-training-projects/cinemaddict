@@ -190,6 +190,18 @@ export default class FilmDetails extends AbstarctView {
     return createFilmDetailsTemplate(this._data);
   }
 
+  updateData(update) {
+    if (!update) {
+      return;
+    }
+
+    this._data = Object.assign(
+        {},
+        this._data,
+        update
+    );
+  }
+
   _clickHandler(evt) {
     evt.preventDefault();
     this._callback.click(FilmDetails.parseDataToFilm(this._data));
