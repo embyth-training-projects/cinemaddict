@@ -68,6 +68,7 @@ export default class Film {
   _escKeyDownHandler(evt) {
     if (evt.key === `Escape` || evt.key === `Esc`) {
       evt.preventDefault();
+      this._changeData(this._filmDetailsComponent.getUpdatedData());
       this._removeFilmDetails();
     }
   }

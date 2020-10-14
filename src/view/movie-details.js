@@ -216,6 +216,10 @@ export default class FilmDetails extends SmartView {
     this._setInnerHandlers();
   }
 
+  getUpdatedData() {
+    return FilmDetails.parseDataToFilm(this._data);
+  }
+
   getTemplate() {
     return createFilmDetailsTemplate(this._data);
   }
