@@ -188,15 +188,7 @@ export default class FilmDetails extends AbstarctView {
     this._watchedToggleHandler = this._watchedToggleHandler.bind(this);
     this._watchlistToggleHandler = this._watchlistToggleHandler.bind(this);
 
-    this.getElement()
-      .querySelector(`.film-details__control-label--favorite`)
-      .addEventListener(`click`, this._favoriteToggleHandler);
-    this.getElement()
-      .querySelector(`.film-details__control-label--watched`)
-      .addEventListener(`click`, this._watchedToggleHandler);
-    this.getElement()
-      .querySelector(`.film-details__control-label--watchlist`)
-      .addEventListener(`click`, this._watchlistToggleHandler);
+    this._setInnerHandlers();
   }
 
   getTemplate() {
@@ -215,24 +207,44 @@ export default class FilmDetails extends AbstarctView {
     );
   }
 
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.closeDetailsClickHandler(this._callback.click);
+  }
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelector(`#favorite`)
+      .addEventListener(`change`, this._favoriteToggleHandler);
+    this.getElement()
+      .querySelector(`#watched`)
+      .addEventListener(`change`, this._watchedToggleHandler);
+    this.getElement()
+      .querySelector(`#watchlist`)
+      .addEventListener(`change`, this._watchlistToggleHandler);
+  }
+
   _clickHandler(evt) {
     evt.preventDefault();
     this._callback.click(FilmDetails.parseDataToFilm(this._data));
   }
 
-  _favoriteToggleHandler() {
+  _favoriteToggleHandler(evt) {
+    evt.preventDefault();
     this.updateData({
       isFavorite: !this._data.isFavorite
     });
   }
 
-  _watchedToggleHandler() {
+  _watchedToggleHandler(evt) {
+    evt.preventDefault();
     this.updateData({
       isWatched: !this._data.isWatched
     });
   }
 
-  _watchlistToggleHandler() {
+  _watchlistToggleHandler(evt) {
+    evt.preventDefault();
     this.updateData({
       isWatchlisted: !this._data.isWatchlisted
     });
