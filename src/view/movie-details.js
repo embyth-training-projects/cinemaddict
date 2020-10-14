@@ -184,6 +184,19 @@ export default class FilmDetails extends AbstarctView {
 
     this._data = FilmDetails.parseFilmToData(movie);
     this._clickHandler = this._clickHandler.bind(this);
+    this._favoriteToggleHandler = this._favoriteToggleHandler.bind(this);
+    this._watchedToggleHandler = this._watchedToggleHandler.bind(this);
+    this._watchlistToggleHandler = this._watchlistToggleHandler.bind(this);
+
+    this.getElement()
+      .querySelector(`.film-details__control-label--favorite`)
+      .addEventListener(`click`, this._favoriteToggleHandler);
+    this.getElement()
+      .querySelector(`.film-details__control-label--watched`)
+      .addEventListener(`click`, this._watchedToggleHandler);
+    this.getElement()
+      .querySelector(`.film-details__control-label--watchlist`)
+      .addEventListener(`click`, this._watchlistToggleHandler);
   }
 
   getTemplate() {
@@ -205,6 +218,24 @@ export default class FilmDetails extends AbstarctView {
   _clickHandler(evt) {
     evt.preventDefault();
     this._callback.click(FilmDetails.parseDataToFilm(this._data));
+  }
+
+  _favoriteToggleHandler() {
+    this.updateData({
+      isFavorite: !this._data.isFavorite
+    });
+  }
+
+  _watchedToggleHandler() {
+    this.updateData({
+      isWatched: !this._data.isWatched
+    });
+  }
+
+  _watchlistToggleHandler() {
+    this.updateData({
+      isWatchlisted: !this._data.isWatchlisted
+    });
   }
 
   closeDetailsClickHandler(callback) {
