@@ -205,6 +205,21 @@ export default class FilmDetails extends AbstarctView {
         this._data,
         update
     );
+
+    this.updateElement();
+  }
+
+  updateElement() {
+    let prevElement = this.getElement();
+    const parent = prevElement.parentElement;
+    this.removeElement();
+
+    const newElement = this.getElement();
+
+    parent.replaceChild(newElement, prevElement);
+    prevElement = null;
+
+    this.restoreHandlers();
   }
 
   restoreHandlers() {
