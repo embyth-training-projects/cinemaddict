@@ -1,5 +1,12 @@
 import AbstarctView from './abstract';
 
+const EmojiType = {
+  SMILE: `smile`,
+  SLEEP: `sleeping`,
+  PUKE: `puke`,
+  ANGRY: `angry`,
+};
+
 const getFormattedReleaseDate = (date) => {
   let day = date.getDate();
   if (day < 10) {
@@ -16,10 +23,14 @@ const createGenreItemTemplate = (genre) => {
   return `<span class="film-details__genre">${genre}</span>`;
 };
 
+const getEmojiPath = (emoji) => {
+  return `images/emoji/${emoji}.png`;
+};
+
 const createCommentItemTemplate = (commentItem) => {
   const {emoji, date, author, comment} = commentItem;
 
-  const emojiPath = `images/emoji/${emoji}.png`;
+  const emojiPath = getEmojiPath(emoji);
 
   return (
     `<li class="film-details__comment">
@@ -38,8 +49,20 @@ const createCommentItemTemplate = (commentItem) => {
   );
 };
 
+const createSelectedEmojiTemplate = (emoji) => {
+  if (!emoji) {
+    return ``;
+  }
+
+  const emojiPath = getEmojiPath(emoji);
+
+  return (
+    `<img src="${emojiPath}" width="55" height="55" alt="emoji-${emoji}">`
+  );
+};
+
 const createFilmDetailsTemplate = (movie) => {
-  const {title, totalRating, poster, runtime, description, release, genres, writers, actors, ageRating, alternativeTitle, director, comments, isWatchlisted, isFavorite, isWatched} = movie;
+  const {title, totalRating, poster, runtime, description, release, genres, writers, actors, ageRating, alternativeTitle, director, comments, isWatchlisted, isFavorite, isWatched, userEmoji} = movie;
 
   const writersToString = writers.join(`, `);
   const actorsToString = actors.join(`, `);
@@ -50,6 +73,7 @@ const createFilmDetailsTemplate = (movie) => {
   const commentsItemsTemplate = comments
     .map(createCommentItemTemplate)
     .join(``);
+  const selectedEmojiTemplate = createSelectedEmojiTemplate(userEmoji);
 
   return (
     `<section class="film-details">
@@ -143,29 +167,29 @@ const createFilmDetailsTemplate = (movie) => {
             </ul>
 
             <div class="film-details__new-comment">
-              <div for="add-emoji" class="film-details__add-emoji-label"></div>
+              <div for="add-emoji" class="film-details__add-emoji-label">${selectedEmojiTemplate}</div>
 
               <label class="film-details__comment-label">
                 <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
               </label>
 
               <div class="film-details__emoji-list">
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
+                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" ${userEmoji === EmojiType.SMILE ? `checked` : ``}>
                 <label class="film-details__emoji-label" for="emoji-smile">
                   <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
                 </label>
 
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
+                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping" ${userEmoji === EmojiType.SLEEP ? `checked` : ``}>
                 <label class="film-details__emoji-label" for="emoji-sleeping">
                   <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
                 </label>
 
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
+                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke" ${userEmoji === EmojiType.PUKE ? `checked` : ``}>
                 <label class="film-details__emoji-label" for="emoji-puke">
                   <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
                 </label>
 
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
+                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry" ${userEmoji === EmojiType.ANGRY ? `checked` : ``}>
                 <label class="film-details__emoji-label" for="emoji-angry">
                   <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
                 </label>
@@ -187,6 +211,7 @@ export default class FilmDetails extends AbstarctView {
     this._favoriteToggleHandler = this._favoriteToggleHandler.bind(this);
     this._watchedToggleHandler = this._watchedToggleHandler.bind(this);
     this._watchlistToggleHandler = this._watchlistToggleHandler.bind(this);
+    this._emojiChangeHandler = this._emojiChangeHandler.bind(this);
 
     this._setInnerHandlers();
   }
@@ -195,7 +220,7 @@ export default class FilmDetails extends AbstarctView {
     return createFilmDetailsTemplate(this._data);
   }
 
-  updateData(update) {
+  updateData(update, justDataUpdate) {
     if (!update) {
       return;
     }
@@ -205,6 +230,10 @@ export default class FilmDetails extends AbstarctView {
         this._data,
         update
     );
+
+    if (justDataUpdate) {
+      return;
+    }
 
     this.updateElement();
   }
@@ -237,6 +266,9 @@ export default class FilmDetails extends AbstarctView {
     this.getElement()
       .querySelector(`#watchlist`)
       .addEventListener(`change`, this._watchlistToggleHandler);
+    this.getElement()
+      .querySelectorAll(`.film-details__emoji-item`)
+      .forEach((item) => item.addEventListener(`change`, this._emojiChangeHandler));
   }
 
   _clickHandler(evt) {
@@ -248,20 +280,29 @@ export default class FilmDetails extends AbstarctView {
     evt.preventDefault();
     this.updateData({
       isFavorite: !this._data.isFavorite
-    });
+    }, true);
   }
 
   _watchedToggleHandler(evt) {
     evt.preventDefault();
     this.updateData({
       isWatched: !this._data.isWatched
-    });
+    }, true);
   }
 
   _watchlistToggleHandler(evt) {
     evt.preventDefault();
     this.updateData({
       isWatchlisted: !this._data.isWatchlisted
+    }, true);
+  }
+
+  _emojiChangeHandler(evt) {
+    evt.preventDefault();
+    const emoji = evt.target.value;
+
+    this.updateData({
+      userEmoji: emoji
     });
   }
 
@@ -273,10 +314,20 @@ export default class FilmDetails extends AbstarctView {
   }
 
   static parseFilmToData(film) {
-    return Object.assign({}, film);
+    return Object.assign(
+        {},
+        film,
+        {
+          userEmoji: null
+        }
+    );
   }
 
   static parseDataToFilm(data) {
-    return Object.assign({}, data);
+    data = Object.assign({}, data);
+
+    delete data.userEmoji;
+
+    return data;
   }
 }
