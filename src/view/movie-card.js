@@ -1,4 +1,5 @@
 import AbstarctView from './abstract';
+import {getFormattedRuntime} from '../utils/date';
 
 const checkDescriptionLength = (description) => {
   const MAX_DESCRIPTION_LENGTH = 140;
@@ -16,6 +17,7 @@ const createFilmCardTemplate = (movie) => {
   const {title, totalRating, poster, runtime, description, release, genres, comments, isWatchlisted, isFavorite, isWatched} = movie;
 
   const releaseYear = release.date.getFullYear();
+  const formattedRuntime = getFormattedRuntime(runtime);
 
   return (
     `<article class="film-card">
@@ -23,7 +25,7 @@ const createFilmCardTemplate = (movie) => {
       <p class="film-card__rating">${totalRating}</p>
       <p class="film-card__info">
         <span class="film-card__year">${releaseYear}</span>
-        <span class="film-card__duration">${runtime}</span>
+        <span class="film-card__duration">${formattedRuntime}</span>
         <span class="film-card__genre">${genres[0]}</span>
       </p>
       <img src="${poster}" alt="${title}" class="film-card__poster">

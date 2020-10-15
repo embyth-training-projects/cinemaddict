@@ -89,16 +89,7 @@ const generateRuntime = () => {
   const MIN_FILM_DURATION = 10;
   const MAX_FILM_DURATION = 200;
 
-  const filmDuration = getRandomInteger(MIN_FILM_DURATION, MAX_FILM_DURATION);
-
-  const hour = Math.trunc(filmDuration / 60);
-  const minute = Math.ceil(filmDuration / 60 % 1 * 60);
-
-  const hourToString = (hour > 0) ? `${hour}h` : ``;
-  const minuteToString = (minute > 0) ? `${minute}m` : ``;
-
-  const result = (hour === 0) ? `${minuteToString}` : `${hourToString} ${minuteToString}`;
-  return result;
+  return getRandomInteger(MIN_FILM_DURATION, MAX_FILM_DURATION);
 };
 
 // Функция генерации жанров фильма случайным образом

@@ -14,7 +14,7 @@ export const generateDate = () => {
   currentDate.setDate(currentDate.getDate() + daysGap);
   currentDate = new Date(currentDate);
 
-  return `${currentDate.getFullYear()}/${currentDate.getMonth()}/${currentDate.getDate()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+  return currentDate;
 };
 
 export const getRandomElement = (array) => {
