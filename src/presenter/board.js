@@ -41,6 +41,7 @@ export default class Board {
     this._handleFilmChange = this._handleFilmChange.bind(this);
     this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._handleModeChange = this._handleModeChange.bind(this);
   }
 
   init(boardFilms) {
@@ -51,19 +52,27 @@ export default class Board {
     this._renderBoard();
   }
 
+  _handleModeChange() {
+    [
+      ...Object.values(this._filmPresenter),
+      ...Object.values(this._filmTopRatedPresenter),
+      ...Object.values(this._filmMostCommentedPresenter)
+    ].forEach((presenter) => presenter.resetView());
+  }
+
   _handleFilmChange(updatedFilm) {
     this._boardFilms = updateItem(this._boardFilms, updatedFilm);
     this._sourcedBoardFilms = updateItem(this._sourcedBoardFilms, updatedFilm);
 
-    if (Object.keys(this._filmPresenter).includes(updatedFilm.id.toString())) {
+    if (this._filmPresenter[updatedFilm.id]) {
       this._filmPresenter[updatedFilm.id].init(updatedFilm);
     }
 
-    if (Object.keys(this._filmTopRatedPresenter).includes(updatedFilm.id.toString())) {
+    if (this._filmTopRatedPresenter[updatedFilm.id]) {
       this._filmTopRatedPresenter[updatedFilm.id].init(updatedFilm);
     }
 
-    if (Object.keys(this._filmMostCommentedPresenter).includes(updatedFilm.id.toString())) {
+    if (this._filmMostCommentedPresenter[updatedFilm.id]) {
       this._filmMostCommentedPresenter[updatedFilm.id].init(updatedFilm);
     }
   }
@@ -102,20 +111,20 @@ export default class Board {
   }
 
   _renderFilm(container, film) {
-    const filmPresenter = new FilmPresenter(container, this._handleFilmChange);
+    const filmPresenter = new FilmPresenter(container, this._handleFilmChange, this._handleModeChange);
     filmPresenter.init(film);
     this._filmPresenter[film.id] = filmPresenter;
   }
 
   _renderExtraFilm(container, film, type) {
-    const filmPresenter = new FilmPresenter(container, this._handleFilmChange);
+    const filmPresenter = new FilmPresenter(container, this._handleFilmChange, this._handleModeChange);
     filmPresenter.init(film);
 
-    switch (type.TITLE) {
-      case extraListType.TOP_RATED.TITLE:
+    switch (type) {
+      case extraListType.TOP_RATED:
         this._filmTopRatedPresenter[film.id] = filmPresenter;
         break;
-      case extraListType.MOST_COMMENTED.TITLE:
+      case extraListType.MOST_COMMENTED:
         this._filmMostCommentedPresenter[film.id] = filmPresenter;
         break;
     }

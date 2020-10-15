@@ -207,46 +207,55 @@ export default class FilmDetails extends SmartView {
     super();
 
     this._data = FilmDetails.parseFilmToData(movie);
-    this._clickHandler = this._clickHandler.bind(this);
+
+    this._closeClickHandler = this._closeClickHandler.bind(this);
+
     this._favoriteToggleHandler = this._favoriteToggleHandler.bind(this);
     this._watchedToggleHandler = this._watchedToggleHandler.bind(this);
     this._watchlistToggleHandler = this._watchlistToggleHandler.bind(this);
+
     this._emojiChangeHandler = this._emojiChangeHandler.bind(this);
 
-    this._setInnerHandlers();
-  }
-
-  getUpdatedData() {
-    return FilmDetails.parseDataToFilm(this._data);
+    this.setInnerHandlers();
   }
 
   getTemplate() {
     return createFilmDetailsTemplate(this._data);
   }
 
-  restoreHandlers() {
-    this._setInnerHandlers();
-    this.closeDetailsClickHandler(this._callback.click);
+  getUpdatedData() {
+    return FilmDetails.parseDataToFilm(this._data);
   }
 
-  _setInnerHandlers() {
+  setInnerHandlers() {
+    this._setFavoriteChangeHandler(this._favoriteToggleHandler);
+    this._setWatchedChangeHandler(this._watchedToggleHandler);
+    this._setWatchlistChangeHandler(this._watchlistToggleHandler);
+    this._setEmojiChangeHandler(this._emojiChangeHandler);
+  }
+
+  restoreHandlers() {
+    this.closeDetailsClickHandler(this._callback.closeClick);
+    this.setInnerHandlers();
+  }
+
+  closeDetailsClickHandler(callback) {
+    this._callback.closeClick = callback;
+    this.getElement()
+      .querySelector(`.film-details__close-btn`)
+      .addEventListener(`click`, this._closeClickHandler);
+  }
+
+  _closeClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.closeClick(FilmDetails.parseDataToFilm(this._data));
+  }
+
+  _setFavoriteChangeHandler(callback) {
+    this._callback.favoriteClick = callback;
     this.getElement()
       .querySelector(`#favorite`)
       .addEventListener(`change`, this._favoriteToggleHandler);
-    this.getElement()
-      .querySelector(`#watched`)
-      .addEventListener(`change`, this._watchedToggleHandler);
-    this.getElement()
-      .querySelector(`#watchlist`)
-      .addEventListener(`change`, this._watchlistToggleHandler);
-    this.getElement()
-      .querySelectorAll(`.film-details__emoji-item`)
-      .forEach((item) => item.addEventListener(`change`, this._emojiChangeHandler));
-  }
-
-  _clickHandler(evt) {
-    evt.preventDefault();
-    this._callback.click(FilmDetails.parseDataToFilm(this._data));
   }
 
   _favoriteToggleHandler(evt) {
@@ -256,11 +265,25 @@ export default class FilmDetails extends SmartView {
     }, true);
   }
 
+  _setWatchedChangeHandler(callback) {
+    this._callback.watchedClick = callback;
+    this.getElement()
+      .querySelector(`#watched`)
+      .addEventListener(`change`, this._watchedToggleHandler);
+  }
+
   _watchedToggleHandler(evt) {
     evt.preventDefault();
     this.updateData({
       isWatched: !this._data.isWatched
     }, true);
+  }
+
+  _setWatchlistChangeHandler(callback) {
+    this._callback.watchlistClick = callback;
+    this.getElement()
+      .querySelector(`#watchlist`)
+      .addEventListener(`change`, this._watchlistToggleHandler);
   }
 
   _watchlistToggleHandler(evt) {
@@ -270,6 +293,13 @@ export default class FilmDetails extends SmartView {
     }, true);
   }
 
+  _setEmojiChangeHandler(callback) {
+    this._callback.emojiChange = callback;
+    this.getElement()
+      .querySelectorAll(`.film-details__emoji-item`)
+      .forEach((item) => item.addEventListener(`change`, this._emojiChangeHandler));
+  }
+
   _emojiChangeHandler(evt) {
     evt.preventDefault();
     const emoji = evt.target.value;
@@ -277,13 +307,6 @@ export default class FilmDetails extends SmartView {
     this.updateData({
       userEmoji: emoji
     });
-  }
-
-  closeDetailsClickHandler(callback) {
-    this._callback.click = callback;
-    this.getElement()
-      .querySelector(`.film-details__close-btn`)
-      .addEventListener(`click`, this._clickHandler);
   }
 
   static parseFilmToData(film) {

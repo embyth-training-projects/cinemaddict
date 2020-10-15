@@ -1,18 +1,26 @@
 import FilmCardView from '../view/movie-card';
 import FilmDetailsView from '../view/movie-details';
-import {render, replace, remove, addChild, deleteChild} from '../utils/render';
+import {render, replace, remove} from '../utils/render';
+
+const Mode = {
+  DEFAULT: `default`,
+  DETAILS: `details`,
+};
 
 export default class Film {
-  constructor(filmsListContainer, changeData) {
+  constructor(filmsListContainer, changeData, changeMode) {
     this._filmsListContainer = filmsListContainer;
     this._changeData = changeData;
+    this._changeMode = changeMode;
 
     this._filmComponent = null;
     this._filmDetailsComponent = null;
+    this._mode = Mode.DEFAULT;
 
-    this._handleDetailsOpen = this._handleDetailsOpen.bind(this);
-    this._handleDetailsClose = this._handleDetailsClose.bind(this);
+    this._handleOpenDetailsClick = this._handleOpenDetailsClick.bind(this);
+    this._handleCloseDetailsClick = this._handleCloseDetailsClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
+
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
     this._handleWatchlistClick = this._handleWatchlistClick.bind(this);
@@ -27,11 +35,10 @@ export default class Film {
     this._filmComponent = new FilmCardView(film);
     this._filmDetailsComponent = new FilmDetailsView(film);
 
-    this._filmComponent.openDetailsClickHandler(this._handleDetailsOpen);
+    this._filmComponent.openDetailsClickHandler(this._handleOpenDetailsClick);
     this._filmComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._filmComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._filmComponent.setWatchlistClickHandler(this._handleWatchlistClick);
-    this._filmDetailsComponent.closeDetailsClickHandler(this._handleDetailsClose);
 
     if (prevFilmComponent === null || prevFilmDetailsComponent === null) {
       render(this._filmsListContainer, this._filmComponent);
@@ -39,10 +46,12 @@ export default class Film {
     }
 
     if (this._filmsListContainer.contains(prevFilmComponent.getElement())) {
-      replace(this._filmComponent, prevFilmComponent);
+      render(document.body, prevFilmDetailsComponent);
     }
 
-    if (this._filmsListContainer.contains(prevFilmDetailsComponent.getElement())) {
+    replace(this._filmComponent, prevFilmComponent);
+
+    if (this._mode === Mode.DETAILS) {
       replace(this._filmDetailsComponent, prevFilmDetailsComponent);
     }
 
@@ -55,14 +64,27 @@ export default class Film {
     remove(this._filmDetailsComponent);
   }
 
+  resetView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._removeFilmDetails();
+    }
+  }
+
   _showFilmDetails() {
-    addChild(document.body, this._filmDetailsComponent);
+    render(document.body, this._filmDetailsComponent);
+
+    this._filmDetailsComponent.closeDetailsClickHandler(this._handleCloseDetailsClick);
+    this._filmDetailsComponent.setInnerHandlers();
+
     document.addEventListener(`keydown`, this._escKeyDownHandler);
+    this._changeMode();
+    this._mode = Mode.DETAILS;
   }
 
   _removeFilmDetails() {
-    deleteChild(this._filmDetailsComponent);
+    remove(this._filmDetailsComponent);
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
+    this._mode = Mode.DEFAULT;
   }
 
   _escKeyDownHandler(evt) {
@@ -73,11 +95,11 @@ export default class Film {
     }
   }
 
-  _handleDetailsOpen() {
+  _handleOpenDetailsClick() {
     this._showFilmDetails();
   }
 
-  _handleDetailsClose(film) {
+  _handleCloseDetailsClick(film) {
     this._changeData(film);
     this._removeFilmDetails();
   }
