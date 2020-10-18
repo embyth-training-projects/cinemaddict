@@ -38,10 +38,13 @@ export default class Board {
     this._noDataComponent = new NoDataView();
     this._showMoreButtonComponent = new ShowMoreButtonView();
 
-    this._handleFilmChange = this._handleFilmChange.bind(this);
+    this._handleViewAction = this._handleViewAction.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
+
+    this._filmsModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -62,26 +65,20 @@ export default class Board {
     }
   }
 
+  _handleViewAction(actionType, updateType, update) {
+
+  }
+
+  _handleModelEvent(updateType, data) {
+
+  }
+
   _handleModeChange() {
     [
       ...Object.values(this._filmPresenter),
       ...Object.values(this._filmTopRatedPresenter),
       ...Object.values(this._filmMostCommentedPresenter)
     ].forEach((presenter) => presenter.resetView());
-  }
-
-  _handleFilmChange(updatedFilm) {
-    if (this._filmPresenter[updatedFilm.id]) {
-      this._filmPresenter[updatedFilm.id].init(updatedFilm);
-    }
-
-    if (this._filmTopRatedPresenter[updatedFilm.id]) {
-      this._filmTopRatedPresenter[updatedFilm.id].init(updatedFilm);
-    }
-
-    if (this._filmMostCommentedPresenter[updatedFilm.id]) {
-      this._filmMostCommentedPresenter[updatedFilm.id].init(updatedFilm);
-    }
   }
 
   _handleSortTypeChange(sortType) {
@@ -100,7 +97,7 @@ export default class Board {
   }
 
   _renderFilm(film, container, type) {
-    const filmPresenter = new FilmPresenter(container, this._handleFilmChange, this._handleModeChange);
+    const filmPresenter = new FilmPresenter(container, this._handleViewAction, this._handleModeChange);
     filmPresenter.init(film);
 
     switch (type) {

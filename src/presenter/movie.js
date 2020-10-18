@@ -1,6 +1,7 @@
 import FilmCardView from '../view/movie-card';
 import FilmDetailsView from '../view/movie-details';
 import {render, replace, remove} from '../utils/render';
+import {UserAction, UpdateType} from '../const';
 
 const Mode = {
   DEFAULT: `default`,
@@ -100,12 +101,18 @@ export default class Film {
   }
 
   _handleCloseDetailsClick(film) {
-    this._changeData(film);
+    this._changeData(
+        UserAction.UPDATE_MOVIE,
+        UpdateType.PATCH,
+        film
+    );
     this._removeFilmDetails();
   }
 
   _handleFavoriteClick() {
     this._changeData(
+        UserAction.UPDATE_MOVIE,
+        UpdateType.PATCH,
         Object.assign(
             {},
             this._film,
@@ -118,6 +125,8 @@ export default class Film {
 
   _handleWatchedClick() {
     this._changeData(
+        UserAction.UPDATE_MOVIE,
+        UpdateType.PATCH,
         Object.assign(
             {},
             this._film,
@@ -130,6 +139,8 @@ export default class Film {
 
   _handleWatchlistClick() {
     this._changeData(
+        UserAction.UPDATE_MOVIE,
+        UpdateType.PATCH,
         Object.assign(
             {},
             this._film,
