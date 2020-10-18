@@ -7,7 +7,7 @@ import ExtraContainerView from '../view/extra-container';
 import ShowMoreButtonView from '../view/show-more-button';
 import {RenderPosition, render, remove} from '../utils/render';
 import {sortByDate, sortByRating, sortByComments} from '../utils/sort';
-import {MOVIES_AMOUNT, SortType} from '../const';
+import {MOVIES_AMOUNT, SortType, UpdateType, UserAction} from '../const';
 
 const extraListType = {
   TOP_RATED: {
@@ -66,11 +66,28 @@ export default class Board {
   }
 
   _handleViewAction(actionType, updateType, update) {
-
+    switch (actionType) {
+      case UserAction.UPDATE_MOVIE:
+        this._filmsModel.updateFilm(updateType, update);
+        break;
+      case UserAction.ADD_COMMENT:
+        this._filmsModel.addComment(updateType, update);
+        break;
+      case UserAction.DELETE_COMMENT:
+        this._filmsModel.deleteComment(updateType, update);
+        break;
+    }
   }
 
   _handleModelEvent(updateType, data) {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this._filmPresenter[data.id].init(data);
+        break;
+      case UpdateType.MAJOR:
 
+        break;
+    }
   }
 
   _handleModeChange() {
