@@ -24,8 +24,9 @@ const extraListType = {
 };
 
 export default class Board {
-  constructor(boardContainer) {
+  constructor(boardContainer, filmsModel) {
     this._boardContainer = boardContainer;
+    this._filmsModel = filmsModel;
     this._renderedMoviesCount = 0;
     this._currentSortType = SortType.DEFAULT;
     this._filmPresenter = {};
@@ -50,6 +51,10 @@ export default class Board {
 
     this._renderSort();
     this._renderBoard();
+  }
+
+  _getFilms() {
+    return this._filmsModel.getFilms();
   }
 
   _handleModeChange() {
