@@ -26,6 +26,6 @@ render(siteHeaderNode, new UserRankView(user));
 render(siteMainNode, new SiteMenuView(filters), RenderPosition.AFTERBEGIN);
 
 const boardPresenter = new BoardPresenter(siteMainNode, filmsModel);
-boardPresenter.init(movies);
+boardPresenter.init();
 
 render(footerStatictsNode, new FooterStatsView(movies.length));
