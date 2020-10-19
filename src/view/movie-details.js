@@ -206,6 +206,7 @@ export default class FilmDetails extends SmartView {
     this._watchlistToggleHandler = this._watchlistToggleHandler.bind(this);
 
     this._emojiChangeHandler = this._emojiChangeHandler.bind(this);
+    this._deleteClickHandler = this._deleteClickHandler.bind(this);
 
     this.setInnerHandlers();
   }
@@ -227,6 +228,7 @@ export default class FilmDetails extends SmartView {
 
   restoreHandlers() {
     this.closeDetailsClickHandler(this._callback.closeClick);
+    this.setDeleteClickHandler(this._callback.deleteClick);
     this.setInnerHandlers();
   }
 
@@ -242,8 +244,7 @@ export default class FilmDetails extends SmartView {
     this._callback.closeClick(FilmDetails.parseDataToFilm(this._data));
   }
 
-  _setFavoriteChangeHandler(callback) {
-    this._callback.favoriteClick = callback;
+  _setFavoriteChangeHandler() {
     this.getElement()
       .querySelector(`#favorite`)
       .addEventListener(`change`, this._favoriteToggleHandler);
@@ -256,8 +257,7 @@ export default class FilmDetails extends SmartView {
     }, true);
   }
 
-  _setWatchedChangeHandler(callback) {
-    this._callback.watchedClick = callback;
+  _setWatchedChangeHandler() {
     this.getElement()
       .querySelector(`#watched`)
       .addEventListener(`change`, this._watchedToggleHandler);
@@ -270,8 +270,7 @@ export default class FilmDetails extends SmartView {
     }, true);
   }
 
-  _setWatchlistChangeHandler(callback) {
-    this._callback.watchlistClick = callback;
+  _setWatchlistChangeHandler() {
     this.getElement()
       .querySelector(`#watchlist`)
       .addEventListener(`change`, this._watchlistToggleHandler);
@@ -284,8 +283,7 @@ export default class FilmDetails extends SmartView {
     }, true);
   }
 
-  _setEmojiChangeHandler(callback) {
-    this._callback.emojiChange = callback;
+  _setEmojiChangeHandler() {
     this.getElement()
       .querySelectorAll(`.film-details__emoji-item`)
       .forEach((item) => item.addEventListener(`change`, this._emojiChangeHandler));
@@ -298,6 +296,26 @@ export default class FilmDetails extends SmartView {
     this.updateData({
       userEmoji: emoji
     });
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement()
+    .querySelectorAll(`.film-details__comment-delete`)
+    .forEach((button, index) => button.addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+      this._deleteClickHandler(index);
+    }));
+  }
+
+  _deleteClickHandler(index) {
+    this.updateData(Object.assign(
+        {},
+        this._data,
+        {comments: [...this._data.comments.slice(0, index), ...this._data.comments.slice(index + 1)]}
+    ), true);
+
+    this._callback.deleteClick(FilmDetails.parseDataToFilm(this._data));
   }
 
   static parseFilmToData(film) {

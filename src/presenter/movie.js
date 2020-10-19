@@ -20,6 +20,7 @@ export default class Film {
 
     this._handleOpenDetailsClick = this._handleOpenDetailsClick.bind(this);
     this._handleCloseDetailsClick = this._handleCloseDetailsClick.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
 
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
@@ -40,6 +41,9 @@ export default class Film {
     this._filmComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._filmComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._filmComponent.setWatchlistClickHandler(this._handleWatchlistClick);
+    this._filmDetailsComponent.setDeleteClickHandler(this._handleDeleteClick);
+    this._filmDetailsComponent.closeDetailsClickHandler(this._handleCloseDetailsClick);
+    this._filmDetailsComponent.setInnerHandlers();
 
     if (prevFilmComponent === null || prevFilmDetailsComponent === null) {
       render(this._filmsListContainer, this._filmComponent);
@@ -74,9 +78,6 @@ export default class Film {
   _showFilmDetails() {
     render(document.body, this._filmDetailsComponent);
 
-    this._filmDetailsComponent.closeDetailsClickHandler(this._handleCloseDetailsClick);
-    this._filmDetailsComponent.setInnerHandlers();
-
     document.addEventListener(`keydown`, this._escKeyDownHandler);
     this._changeMode();
     this._mode = Mode.DETAILS;
@@ -91,7 +92,11 @@ export default class Film {
   _escKeyDownHandler(evt) {
     if (evt.key === `Escape` || evt.key === `Esc`) {
       evt.preventDefault();
-      this._changeData(this._filmDetailsComponent.getUpdatedData());
+      this._changeData(
+          UserAction.UPDATE_MOVIE,
+          UpdateType.MINOR,
+          this._filmDetailsComponent.getUpdatedData()
+      );
       this._removeFilmDetails();
     }
   }
@@ -103,10 +108,18 @@ export default class Film {
   _handleCloseDetailsClick(film) {
     this._changeData(
         UserAction.UPDATE_MOVIE,
-        UpdateType.PATCH,
+        UpdateType.MINOR,
         film
     );
     this._removeFilmDetails();
+  }
+
+  _handleDeleteClick(film) {
+    this._changeData(
+        UserAction.DELETE_COMMENT,
+        UpdateType.PATCH,
+        film
+    );
   }
 
   _handleFavoriteClick() {

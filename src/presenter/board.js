@@ -83,14 +83,33 @@ export default class Board {
   _handleModelEvent(updateType, data) {
     switch (updateType) {
       case UpdateType.PATCH:
-        // data change only
-        this._filmPresenter[data.id].init(data);
+        // after data change
+        this._handleFilmsChange(data);
+        break;
+      case UpdateType.MINOR:
+        // after comment amount change
+        this._clearBoard({clearExtraBoards: true});
+        this.init();
         break;
       case UpdateType.MAJOR:
-        // full board rerendering
-        this._clearBoard({resetRenderedFilmsCount: true, resetSortType: true});
-        this._renderBoard();
+        // after filter change
+        this._clearBoard({resetRenderedFilmsCount: true, resetSortType: true, clearExtraBoards: true});
+        this.init();
         break;
+    }
+  }
+
+  _handleFilmsChange(data) {
+    if (this._filmPresenter[data.id]) {
+      this._filmPresenter[data.id].init(data);
+    }
+
+    if (this._filmTopRatedPresenter[data.id]) {
+      this._filmTopRatedPresenter[data.id].init(data);
+    }
+
+    if (this._filmMostCommentedPresenter[data.id]) {
+      this._filmMostCommentedPresenter[data.id].init(data);
     }
   }
 
