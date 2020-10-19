@@ -25,7 +25,7 @@ const footerStatictsNode = document.querySelector(`.footer__statistics`);
 
 render(siteHeaderNode, new UserRankView(user));
 
-const boardPresenter = new BoardPresenter(siteMainNode, filmsModel);
+const boardPresenter = new BoardPresenter(siteMainNode, filterModel, filmsModel);
 const filterPresenter = new FilterPresenter(siteMainNode, filterModel, filmsModel);
 filterPresenter.init();
 boardPresenter.init();

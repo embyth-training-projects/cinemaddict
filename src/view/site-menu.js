@@ -42,8 +42,13 @@ export default class SiteMenu extends AbstarctView {
   }
 
   _filterTypeClickHandler(evt) {
+    let target = evt.target;
+    if (target.parentElement.tagName === `A`) {
+      target = evt.target.parentElement;
+    }
+
     evt.preventDefault();
-    this._callback.filterClick(evt.target.dataset.filterType);
+    this._callback.filterClick(target.dataset.filterType);
   }
 
   setFilterTypeClickHandler(callback) {
