@@ -1,5 +1,7 @@
 import SmartView from './smart';
 import {getFormattedReleaseDate, getFormattedRuntime, getHumanizeCommentDate} from '../utils/date';
+import {getRandomElement} from '../utils/common';
+import {AUTHORS} from '../const';
 
 const EmojiType = {
   SMILE: `smile`,
@@ -52,7 +54,7 @@ const createSelectedEmojiTemplate = (emoji) => {
 };
 
 const createFilmDetailsTemplate = (movie) => {
-  const {title, totalRating, poster, runtime, description, release, genres, writers, actors, ageRating, alternativeTitle, director, comments, isWatchlisted, isFavorite, isWatched, userEmoji} = movie;
+  const {title, totalRating, poster, runtime, description, release, genres, writers, actors, ageRating, alternativeTitle, director, comments, isWatchlisted, isFavorite, isWatched, userEmoji, userText} = movie;
 
   const writersToString = writers.join(`, `);
   const actorsToString = actors.join(`, `);
@@ -161,7 +163,7 @@ const createFilmDetailsTemplate = (movie) => {
               <div for="add-emoji" class="film-details__add-emoji-label">${selectedEmojiTemplate}</div>
 
               <label class="film-details__comment-label">
-                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${userText ? userText : ``}</textarea>
               </label>
 
               <div class="film-details__emoji-list">
@@ -206,6 +208,8 @@ export default class FilmDetails extends SmartView {
     this._watchlistToggleHandler = this._watchlistToggleHandler.bind(this);
 
     this._emojiChangeHandler = this._emojiChangeHandler.bind(this);
+    this._userMessageInputHandler = this._userMessageInputHandler.bind(this);
+    this._addCommentKeyDownHandler = this._addCommentKeyDownHandler.bind(this);
     this._deleteClickHandler = this._deleteClickHandler.bind(this);
 
     this.setInnerHandlers();
@@ -224,10 +228,12 @@ export default class FilmDetails extends SmartView {
     this._setWatchedChangeHandler(this._watchedToggleHandler);
     this._setWatchlistChangeHandler(this._watchlistToggleHandler);
     this._setEmojiChangeHandler(this._emojiChangeHandler);
+    this._setUserMessageInputHandler(this._userMessageInputHandler);
   }
 
   restoreHandlers() {
     this.closeDetailsClickHandler(this._callback.closeClick);
+    this.setAddCommentKeyDownHandler(this._callback.addCommentKeyDown);
     this.setDeleteClickHandler(this._callback.deleteClick);
     this.setInnerHandlers();
   }
@@ -318,12 +324,50 @@ export default class FilmDetails extends SmartView {
     this._callback.deleteClick(FilmDetails.parseDataToFilm(this._data));
   }
 
+  setAddCommentKeyDownHandler(callback) {
+    this._callback.addCommentKeyDown = callback;
+    this.getElement()
+      .querySelector(`.film-details__comment-input`)
+      .addEventListener(`keydown`, this._addCommentKeyDownHandler);
+  }
+
+  _addCommentKeyDownHandler(evt) {
+    if (evt.ctrlKey && evt.key === `Enter` && this._data.userText !== null && this._data.userText.length > 0 && this._data.userEmoji !== null) {
+      const newComments = [...this._data.comments, this._createComment()];
+      this._data.comments = newComments;
+      this._callback.addCommentKeyDown(FilmDetails.parseDataToFilm(this._data));
+      this._data.userText = null;
+    }
+  }
+
+  _setUserMessageInputHandler() {
+    this.getElement()
+      .querySelector(`.film-details__comment-input`)
+      .addEventListener(`input`, this._userMessageInputHandler);
+  }
+
+  _userMessageInputHandler(evt) {
+    evt.preventDefault();
+
+    this._data.userText = evt.target.value;
+  }
+
+  _createComment() {
+    return {
+      emoji: this._data.userEmoji,
+      date: new Date(),
+      author: getRandomElement(AUTHORS),
+      comment: this._data.userText,
+    };
+  }
+
   static parseFilmToData(film) {
     return Object.assign(
         {},
         film,
         {
-          userEmoji: null
+          userEmoji: null,
+          userText: null
         }
     );
   }
@@ -332,6 +376,7 @@ export default class FilmDetails extends SmartView {
     data = Object.assign({}, data);
 
     delete data.userEmoji;
+    delete data.userText;
 
     return data;
   }

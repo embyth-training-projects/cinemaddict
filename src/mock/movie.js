@@ -5,7 +5,7 @@ import {getRandomInteger, generateDate, getRandomElement} from '../utils/common'
 // в "продуктовом" коде, а для моков самое то.
 // Для "продуктового" кода используйте что-то понадежнее,
 // вроде nanoid - https://github.com/ai/nanoid
-const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
 // Функция генерации описания фильма случайным образом
 const generateDescription = () => {

@@ -21,6 +21,7 @@ export default class Film {
     this._handleOpenDetailsClick = this._handleOpenDetailsClick.bind(this);
     this._handleCloseDetailsClick = this._handleCloseDetailsClick.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
+    this._handleAddCommentKeyDown = this._handleAddCommentKeyDown.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
 
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
@@ -42,6 +43,7 @@ export default class Film {
     this._filmComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._filmComponent.setWatchlistClickHandler(this._handleWatchlistClick);
     this._filmDetailsComponent.setDeleteClickHandler(this._handleDeleteClick);
+    this._filmDetailsComponent.setAddCommentKeyDownHandler(this._handleAddCommentKeyDown);
     this._filmDetailsComponent.closeDetailsClickHandler(this._handleCloseDetailsClick);
     this._filmDetailsComponent.setInnerHandlers();
 
@@ -118,6 +120,14 @@ export default class Film {
     this._changeData(
         UserAction.DELETE_COMMENT,
         UpdateType.PATCH,
+        film
+    );
+  }
+
+  _handleAddCommentKeyDown(film) {
+    this._changeData(
+        UserAction.ADD_COMMENT,
+        UpdateType.MAJOR,
         film
     );
   }
