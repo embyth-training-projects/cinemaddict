@@ -2,13 +2,12 @@ import AbstarctView from './abstract';
 import {FilterType} from '../const';
 
 const createFilterItemTemplate = (filter, currentFilterType) => {
-  const {title, amount} = filter;
-  const filterTitle = title[0].toUpperCase() + title.slice(1, title.length);
-  const createFilterItemCountTemplate = () => `${filterTitle} <span class="main-navigation__item-count">${amount}</span>`;
+  const {name, type, count} = filter;
+  const createFilterItemCountTemplate = () => `${name} <span class="main-navigation__item-count">${count}</span>`;
 
   return (
-    `<a href="#${title}" data-filter-type="${title}" class="main-navigation__item ${title === currentFilterType ? `main-navigation__item--active` : ``}">
-      ${title === FilterType.ALL ? `All movies` : createFilterItemCountTemplate()}
+    `<a href="#${type}" data-filter-type="${type}" class="main-navigation__item ${type === currentFilterType ? `main-navigation__item--active` : ``}">
+      ${type === FilterType.ALL ? name : createFilterItemCountTemplate()}
     </a>`
   );
 };
@@ -35,7 +34,7 @@ export default class SiteMenu extends AbstarctView {
     this._filters = filters;
     this._currentFilterType = currentFilterType;
 
-    this._filterTypeChangeClick = this._filterTypeClickHandler.bind(this);
+    this._filterTypeClickHandler = this._filterTypeClickHandler.bind(this);
   }
 
   getTemplate() {
@@ -51,6 +50,6 @@ export default class SiteMenu extends AbstarctView {
     this._callback.filterClick = callback;
     this.getElement()
     .querySelectorAll(`.main-navigation__item`)
-    .addEventListener(`click`, this._filterTypeClickHandler);
+    .forEach((item) => item.addEventListener(`click`, this._filterTypeClickHandler));
   }
 }
