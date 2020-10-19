@@ -96,12 +96,13 @@ export default class Board {
       case UpdateType.MINOR:
         // after comment amount change
         this._clearBoard({clearExtraBoards: true});
-        this.init();
+        this._renderBoard();
+        this._renderExtraBoard();
         break;
       case UpdateType.MAJOR:
         // after filter change
-        this._clearBoard({resetRenderedFilmsCount: true, resetSortType: true, clearExtraBoards: true});
-        this.init();
+        this._clearBoard({resetRenderedFilmsCount: true, resetSortType: true});
+        this._renderBoard();
         break;
     }
   }
@@ -247,8 +248,16 @@ export default class Board {
   _renderExtraBoard() {
     const films = this._getFilms();
 
-    this._renderExtraList(extraListType.TOP_RATED, films);
-    this._renderExtraList(extraListType.MOST_COMMENTED, films);
+    const isEveryFilmContainsComments = films.every((film) => film.comments.length === 0);
+    const isEveryFilmHasZeroRating = films.every((film) => film.totalRating === 0);
+
+    if (!isEveryFilmHasZeroRating) {
+      this._renderExtraList(extraListType.TOP_RATED, films);
+    }
+
+    if (!isEveryFilmContainsComments) {
+      this._renderExtraList(extraListType.MOST_COMMENTED, films);
+    }
   }
 
   _renderBoard() {

@@ -127,7 +127,7 @@ export default class Film {
   _handleAddCommentKeyDown(film) {
     this._changeData(
         UserAction.ADD_COMMENT,
-        UpdateType.MAJOR,
+        UpdateType.PATCH,
         film
     );
   }

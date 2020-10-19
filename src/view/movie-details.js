@@ -335,7 +335,11 @@ export default class FilmDetails extends SmartView {
   _addCommentKeyDownHandler(evt) {
     if (evt.ctrlKey && evt.key === `Enter` && this._data.userText !== null && this._data.userText.length > 0 && this._data.userEmoji !== null) {
       const newComments = [...this._data.comments, this._createComment()];
-      this._data.comments = newComments;
+      this.updateData(Object.assign(
+          {},
+          this._data,
+          {comments: newComments}
+      ));
       this._callback.addCommentKeyDown(FilmDetails.parseDataToFilm(this._data));
       this._data.userText = null;
     }
