@@ -4,11 +4,12 @@ import SiteMenuView from './view/site-menu';
 import FooterStatsView from './view/footer-stats';
 import BoardPresenter from './presenter/board';
 import FilmsModel from './model/films';
+import FilterModel from './model/filter';
 import {generateMovie} from './mock/movie';
 import {generateFilter} from './mock/filter';
 import {generateUser} from './mock/user';
 import {RenderPosition, render} from './utils/render';
-import {MOVIES_AMOUNT} from './const';
+import {FilterType, MOVIES_AMOUNT} from './const';
 
 // Генерируем необходимые данные для заполнения
 const movies = new Array(MOVIES_AMOUNT.TOTAL).fill().map(generateMovie);
@@ -17,6 +18,8 @@ const user = generateUser();
 
 const filmsModel = new FilmsModel();
 filmsModel.setFilms(movies);
+
+const filterModel = new FilterModel();
 
 const siteHeaderNode = document.querySelector(`.header`);
 const siteMainNode = document.querySelector(`.main`);
