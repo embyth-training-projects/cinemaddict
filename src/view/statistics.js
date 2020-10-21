@@ -66,10 +66,9 @@ const renderStatisticsChart = (statisticsCtx, films) => {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: [`Sci-Fi`, `Animation`, `Fantasy`,
-        `Comedy`, `TV Series`],
+      labels: Object.keys(getGenresFrequencies(films)),
       datasets: [{
-        data: [11, 8, 7, 4, 3],
+        data: Object.values(getGenresFrequencies(films)),
         backgroundColor: `#ffe800`,
         hoverBackgroundColor: `#ffe800`,
         anchor: `start`,
