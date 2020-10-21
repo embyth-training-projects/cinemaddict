@@ -155,7 +155,9 @@ export default class Statistics extends SmartView {
 
     this._periodChangeHandler = this._periodChangeHandler.bind(this);
     this._setPeriodChangeHandler(this._periodChangeHandler);
+  }
 
+  init() {
     this._setChart(this._currentPeriod);
   }
 

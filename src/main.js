@@ -31,6 +31,7 @@ const handleSiteMenuClick = (menuItem) => {
       boardPresenter.destroy();
       statisticsComponent = new StatisticsView(filmsModel.getFilms(), user);
       render(siteMainNode, statisticsComponent);
+      statisticsComponent.init();
       break;
   }
 
