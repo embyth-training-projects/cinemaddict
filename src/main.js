@@ -17,10 +17,10 @@ const user = generateUser();
 const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
     case MenuItem.FILTER:
-      console.log(menuItem);
+      boardPresenter.init();
       break;
     case MenuItem.STATISTICS:
-      console.log(menuItem);
+      boardPresenter.destroy();
       break;
   }
 };

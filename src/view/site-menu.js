@@ -67,6 +67,10 @@ export default class SiteMenu extends AbstarctView {
       target = evt.target.parentElement;
     }
 
+    if (this._currentMenuItem === target.dataset.menuItem) {
+      return;
+    }
+
     evt.preventDefault();
     this._currentMenuItem = target.dataset.menuItem;
     this._callback.menuClick(target.dataset.menuItem);
