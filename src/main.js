@@ -1,6 +1,7 @@
 // Подключаем необходимые компоненты
 import UserRankView from './view/user-rank';
 import FooterStatsView from './view/footer-stats';
+import StatisticsView from './view/statistics';
 import BoardPresenter from './presenter/board';
 import FilterPresenter from './presenter/filter';
 import FilmsModel from './model/films';
@@ -40,6 +41,7 @@ const boardPresenter = new BoardPresenter(siteMainNode, filterModel, filmsModel)
 const filterPresenter = new FilterPresenter(siteMainNode, filterModel, filmsModel);
 filterPresenter.init();
 filterPresenter.setMenuClickHandler(handleSiteMenuClick);
-boardPresenter.init();
+// boardPresenter.init();
+render(siteMainNode, new StatisticsView(filmsModel.getFilms()));
 
 render(footerStatictsNode, new FooterStatsView(movies.length));
