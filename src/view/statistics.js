@@ -3,16 +3,18 @@ import {getGenresFrequencies, filterFilmsByPeriod} from '../utils/statistics';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {PeriodFilter} from '../const';
-import {remove} from '../utils/render';
 import {getUserRank} from '../utils/common';
 
 const createTotalDurationTemplate = (totalDuration) => {
-  const totalDurationHour = Math.trunc(totalDuration / 60);
-  const totalDurationMinutes = Math.ceil(totalDuration / 60 % 1 * 60);
-  const hoursDurationTemplate = totalDurationHour > 0 ? `${totalDurationHour} <span class="statistic__item-description">h</span>` : ``;
-  const minutesDurationTemplate = totalDurationMinutes > 0 ? `${totalDurationMinutes} <span class="statistic__item-description">m` : ``;
-
-  return `${hoursDurationTemplate} ${minutesDurationTemplate}`;
+  if (totalDuration > 0) {
+    const totalDurationHour = Math.trunc(totalDuration / 60);
+    const totalDurationMinutes = Math.ceil(totalDuration / 60 % 1 * 60);
+    const hoursDurationTemplate = totalDurationHour > 0 ? `${totalDurationHour} <span class="statistic__item-description">h</span>` : ``;
+    const minutesDurationTemplate = totalDurationMinutes > 0 ? `${totalDurationMinutes} <span class="statistic__item-description">m</span>` : ``;
+    return `${hoursDurationTemplate} ${minutesDurationTemplate}`;
+  } else {
+    return `0 <span class="statistic__item-description">m</span>`;
+  }
 };
 
 const getTopGenre = (films) => {
@@ -162,11 +164,8 @@ export default class Statistics extends SmartView {
   }
 
   restoreHandlers() {
+    this._setPeriodChangeHandler(this._periodChangeHandler);
     this._setChart(PeriodFilter.ALL_TIME);
-  }
-
-  destroy() {
-    remove(this);
   }
 
   removeElement() {

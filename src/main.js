@@ -14,7 +14,6 @@ import {MenuItem, MOVIES_AMOUNT} from './const';
 // Генерируем необходимые данные для заполнения
 const movies = new Array(MOVIES_AMOUNT.TOTAL).fill().map(generateMovie);
 const user = generateUser();
-let statisticsComponent = null;
 
 const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
@@ -24,8 +23,8 @@ const handleSiteMenuClick = (menuItem) => {
       break;
     case MenuItem.STATISTICS:
       boardPresenter.destroy();
-      statisticsComponent = new StatisticsView(filmsModel.getFilms(), user);
       render(siteMainNode, statisticsComponent);
+      statisticsComponent.restoreHandlers();
       break;
   }
 };
@@ -40,6 +39,7 @@ const siteMainNode = document.querySelector(`.main`);
 const footerStatictsNode = document.querySelector(`.footer__statistics`);
 
 render(siteHeaderNode, new UserRankView(user));
+const statisticsComponent = new StatisticsView(filmsModel.getFilms(), user);
 
 const boardPresenter = new BoardPresenter(siteMainNode, filterModel, filmsModel);
 const filterPresenter = new FilterPresenter(siteMainNode, filterModel, filmsModel);
