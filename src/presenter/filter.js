@@ -37,6 +37,15 @@ export default class Filter {
     remove(prevFilterComponent);
   }
 
+  setMenuClickHandler(callback) {
+    this._menuClickHandler = callback;
+    this._filterComponent.setMenuClickHandler(callback);
+  }
+
+  _restoreHandlers() {
+    this._filterComponent.setMenuClickHandler(this._menuClickHandler);
+  }
+
   _handleFilterTypeClick(filterType) {
     if (this._currentFilter === filterType) {
       return;
@@ -47,6 +56,7 @@ export default class Filter {
 
   _handleModelEvent() {
     this.init();
+    this._restoreHandlers();
   }
 
   _getFilters() {
