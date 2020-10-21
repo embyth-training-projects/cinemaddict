@@ -1,4 +1,9 @@
 import SmartView from './smart';
+import {getGenresFrequencies, filterFilmsByPeriod} from '../utils/statistics';
+import Chart from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+import {PeriodFilter} from '../const';
+import {remove} from '../utils/render';
 
 const createStatisticsTemplate = (data) => {
 
@@ -14,19 +19,19 @@ const createStatisticsTemplate = (data) => {
       <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
         <p class="statistic__filters-description">Show stats:</p>
 
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
+        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="${PeriodFilter.ALL_TIME}" checked>
         <label for="statistic-all-time" class="statistic__filters-label">All time</label>
 
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today">
+        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="${PeriodFilter.TODAY}">
         <label for="statistic-today" class="statistic__filters-label">Today</label>
 
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" value="week">
+        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" value="${PeriodFilter.WEEK}">
         <label for="statistic-week" class="statistic__filters-label">Week</label>
 
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" value="month">
+        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" value="${PeriodFilter.MONTH}">
         <label for="statistic-month" class="statistic__filters-label">Month</label>
 
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year">
+        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="${PeriodFilter.YEAR}">
         <label for="statistic-year" class="statistic__filters-label">Year</label>
       </form>
 
@@ -53,15 +58,23 @@ const createStatisticsTemplate = (data) => {
   );
 };
 
+const renderStatisticsChart = (statisticsCtx, films) => {
+
+};
+
 export default class Statistics extends SmartView {
   constructor(films) {
     super();
 
-    this._data = {
-      films
-    };
+    this._films = [...films].filter((film) => film.isWatched);
 
-    this._setChart();
+    this._statsChart = null;
+    this._currentPeriod = PeriodFilter.ALL_TIME;
+
+    this._periodChangeHandler = this._periodChangeHandler.bind(this);
+    this._setPeriodChangeHandler(this._periodChangeHandler);
+
+    this._setChart(this._currentPeriod);
   }
 
   getTemplate() {
@@ -69,10 +82,44 @@ export default class Statistics extends SmartView {
   }
 
   restoreHandlers() {
-    this._setChart();
+    this._setChart(PeriodFilter.ALL_TIME);
   }
 
-  _setChart() {
+  destroy() {
+    remove(this);
+  }
 
+  removeElement() {
+    super.removeElement();
+
+    if (this._statsChart !== null) {
+      this._statsChart.destroy();
+      this._statsChart = null;
+    }
+  }
+
+  _setPeriodChangeHandler(callback) {
+    this._callback.periodChange = callback;
+    this.getElement()
+      .querySelectorAll(`.statistic__filters-input`)
+      .forEach((input) => input.addEventListener(`change`, this._periodChangeHandler));
+  }
+
+  _periodChangeHandler(evt) {
+    this._currentPeriod = evt.target.value;
+
+    this._setChart(this._currentPeriod);
+  }
+
+  _setChart(period) {
+    if (this._statsChart !== null) {
+      this._statsChart.destroy();
+      this._statsChart = null;
+    }
+
+    const filteredFilms = filterFilmsByPeriod(period, this._films);
+    const statisticsCtx = this.getElement().querySelector(`.statistic__chart`);
+
+    this._statsChart = renderStatisticsChart(statisticsCtx, filteredFilms);
   }
 }

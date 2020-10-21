@@ -146,3 +146,11 @@ export const MenuItem = {
   FILTER: `filter`,
   STATISTICS: `stats`,
 };
+
+export const PeriodFilter = {
+  ALL_TIME: `all-time`,
+  TODAY: `today`,
+  WEEK: `week`,
+  MONTH: `month`,
+  YEAR: `year`,
+};
