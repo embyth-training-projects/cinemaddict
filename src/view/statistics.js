@@ -163,11 +163,6 @@ export default class Statistics extends SmartView {
     return createStatisticsTemplate(this._films, this._user);
   }
 
-  restoreHandlers() {
-    this._setPeriodChangeHandler(this._periodChangeHandler);
-    this._setChart(PeriodFilter.ALL_TIME);
-  }
-
   removeElement() {
     super.removeElement();
 

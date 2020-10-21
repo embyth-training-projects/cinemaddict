@@ -23,18 +23,18 @@ const createSiteMenuTemplate = (filters, currentFilterType, currentMenuItem) => 
       <div class="main-navigation__items">
         ${filterItemsTemplate}
       </div>
-      <a href="#stats" data-menu-item="${MenuItem.STATISTICS}" class="main-navigation__additional ${currentActiveItem === FilterType.STATISTICS ? `main-navigation__item--active` : ``}">Stats</a>
+      <a href="#stats" data-menu-item="${MenuItem.STATISTICS}" class="main-navigation__additional ${currentActiveItem === MenuItem.STATISTICS ? `main-navigation__item--active` : ``}">Stats</a>
     </nav>`
   );
 };
 
 export default class SiteMenu extends AbstarctView {
-  constructor(filters, currentFilterType) {
+  constructor(filters, currentFilterType, currentMenuItem) {
     super();
 
     this._filters = filters;
     this._currentFilterType = currentFilterType;
-    this._currentMenuItem = MenuItem.FILTER;
+    this._currentMenuItem = currentMenuItem;
 
     this._filterTypeClickHandler = this._filterTypeClickHandler.bind(this);
     this._menuItemClickHandler = this._menuItemClickHandler.bind(this);
@@ -67,12 +67,7 @@ export default class SiteMenu extends AbstarctView {
       target = evt.target.parentElement;
     }
 
-    if (this._currentMenuItem === target.dataset.menuItem) {
-      return;
-    }
-
     evt.preventDefault();
-    this._currentMenuItem = target.dataset.menuItem;
     this._callback.menuClick(target.dataset.menuItem);
   }
 

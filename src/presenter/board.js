@@ -100,17 +100,14 @@ export default class Board {
   _handleModelEvent(updateType, data) {
     switch (updateType) {
       case UpdateType.PATCH:
-        // after data change
         this._handleFilmsChange(data);
         break;
       case UpdateType.MINOR:
-        // after comment amount change
         this._clearBoard({clearExtraBoards: true});
         this._renderBoard();
         this._renderExtraBoard();
         break;
       case UpdateType.MAJOR:
-        // after filter change
         this._clearBoard({resetRenderedFilmsCount: true, resetSortType: true});
         this._renderBoard();
         break;

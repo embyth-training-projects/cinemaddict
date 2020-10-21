@@ -4,9 +4,10 @@ import {filter} from '../utils/filter';
 import {FilterType, UpdateType} from '../const';
 
 export default class Filter {
-  constructor(filterContainer, filterModel, filmsModel) {
+  constructor(filterContainer, filterModel, menuModel, filmsModel) {
     this._filterContainer = filterContainer;
     this._filterModel = filterModel;
+    this._menuModel = menuModel;
     this._filmsModel = filmsModel;
     this._currentFilter = null;
 
@@ -17,15 +18,17 @@ export default class Filter {
 
     this._filmsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
+    this._menuModel.addObserver(this._handleModelEvent);
   }
 
   init() {
     this._currentFilter = this._filterModel.getFilter();
+    this._currentMenuItem = this._menuModel.getMenuItem();
 
     const filters = this._getFilters();
     const prevFilterComponent = this._filterComponent;
 
-    this._filterComponent = new FilterView(filters, this._currentFilter);
+    this._filterComponent = new FilterView(filters, this._currentFilter, this._currentMenuItem);
     this._filterComponent.setFilterTypeClickHandler(this._handleFilterTypeClick);
 
     if (prevFilterComponent === null) {
