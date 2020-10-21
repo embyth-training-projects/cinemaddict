@@ -8,20 +8,24 @@ import FilmsModel from './model/films';
 import FilterModel from './model/filter';
 import {generateMovie} from './mock/movie';
 import {generateUser} from './mock/user';
-import {render} from './utils/render';
+import {remove, render} from './utils/render';
 import {MenuItem, MOVIES_AMOUNT} from './const';
 
 // Генерируем необходимые данные для заполнения
 const movies = new Array(MOVIES_AMOUNT.TOTAL).fill().map(generateMovie);
 const user = generateUser();
+let statisticsComponent = null;
 
 const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
     case MenuItem.FILTER:
+      remove(statisticsComponent);
       boardPresenter.init();
       break;
     case MenuItem.STATISTICS:
       boardPresenter.destroy();
+      statisticsComponent = new StatisticsView(filmsModel.getFilms(), user);
+      render(siteMainNode, statisticsComponent);
       break;
   }
 };
@@ -41,7 +45,6 @@ const boardPresenter = new BoardPresenter(siteMainNode, filterModel, filmsModel)
 const filterPresenter = new FilterPresenter(siteMainNode, filterModel, filmsModel);
 filterPresenter.init();
 filterPresenter.setMenuClickHandler(handleSiteMenuClick);
-// boardPresenter.init();
-render(siteMainNode, new StatisticsView(filmsModel.getFilms()));
+boardPresenter.init();
 
 render(footerStatictsNode, new FooterStatsView(movies.length));

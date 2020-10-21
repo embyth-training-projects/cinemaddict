@@ -4,16 +4,37 @@ import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {PeriodFilter} from '../const';
 import {remove} from '../utils/render';
+import {getUserRank} from '../utils/common';
 
-const createStatisticsTemplate = (data) => {
+const createTotalDurationTemplate = (totalDuration) => {
+  const totalDurationHour = Math.trunc(totalDuration / 60);
+  const totalDurationMinutes = Math.ceil(totalDuration / 60 % 1 * 60);
+  const hoursDurationTemplate = totalDurationHour > 0 ? `${totalDurationHour} <span class="statistic__item-description">h</span>` : ``;
+  const minutesDurationTemplate = totalDurationMinutes > 0 ? `${totalDurationMinutes} <span class="statistic__item-description">m` : ``;
 
+  return `${hoursDurationTemplate} ${minutesDurationTemplate}`;
+};
+
+const getTopGenre = (films) => {
+  const genres = getGenresFrequencies(films);
+  const maxValue = Math.max(...Object.values(genres));
+  return Object.keys(genres).find((genre) => genres[genre] === maxValue);
+};
+
+const createStatisticsTemplate = (films, user) => {
+  const {avatar} = user;
+  const initValue = 0;
+  const totalDurationTime = films.reduce((acc, film) => acc + film.runtime, initValue);
+  const totalDurationTemplate = createTotalDurationTemplate(totalDurationTime);
+  const topGenre = getTopGenre(films);
+  const userRank = getUserRank(films.length);
 
   return (
     `<section class="statistic">
       <p class="statistic__rank">
         Your rank
-        <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-        <span class="statistic__rank-label">Sci-Fighter</span>
+        <img class="statistic__img" src="${avatar}" alt="Avatar" width="35" height="35">
+        <span class="statistic__rank-label">${userRank}</span>
       </p>
 
       <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
@@ -38,15 +59,15 @@ const createStatisticsTemplate = (data) => {
       <ul class="statistic__text-list">
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">You watched</h4>
-          <p class="statistic__item-text">22 <span class="statistic__item-description">movies</span></p>
+          <p class="statistic__item-text">${films.length} <span class="statistic__item-description">${films.length > 1 ? `movies` : `movie`}</span></p>
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Total duration</h4>
-          <p class="statistic__item-text">130 <span class="statistic__item-description">h</span> 22 <span class="statistic__item-description">m</span></p>
+          <p class="statistic__item-text">${totalDurationTemplate}</p>
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Top genre</h4>
-          <p class="statistic__item-text">Sci-Fi</p>
+          <p class="statistic__item-text">${films.length ? topGenre : ``}</p>
         </li>
       </ul>
 
@@ -121,10 +142,11 @@ const renderStatisticsChart = (statisticsCtx, films) => {
 };
 
 export default class Statistics extends SmartView {
-  constructor(films) {
+  constructor(films, user) {
     super();
 
     this._films = [...films].filter((film) => film.isWatched);
+    this._user = user;
 
     this._statsChart = null;
     this._currentPeriod = PeriodFilter.ALL_TIME;
@@ -136,7 +158,7 @@ export default class Statistics extends SmartView {
   }
 
   getTemplate() {
-    return createStatisticsTemplate(this._data);
+    return createStatisticsTemplate(this._films, this._user);
   }
 
   restoreHandlers() {
