@@ -1,4 +1,4 @@
-import Observer from '../utils/observer';
+import Observer from './observer';
 import {MenuItem} from '../const';
 
 export default class Menu extends Observer {

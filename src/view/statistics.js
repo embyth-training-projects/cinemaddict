@@ -3,7 +3,7 @@ import {getGenresFrequencies, filterFilmsByPeriod} from '../utils/statistics';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {PeriodFilter} from '../const';
-import {getUserRank} from '../utils/common';
+import {getUserRank} from '../utils/user';
 
 const createTotalDurationTemplate = (totalDuration) => {
   if (totalDuration > 0) {
@@ -23,8 +23,7 @@ const getTopGenre = (films) => {
   return Object.keys(genres).find((genre) => genres[genre] === maxValue);
 };
 
-const createStatisticsTemplate = (films, user) => {
-  const {avatar} = user;
+const createStatisticsTemplate = (films) => {
   const initValue = 0;
   const totalDurationTime = films.reduce((acc, film) => acc + film.runtime, initValue);
   const totalDurationTemplate = createTotalDurationTemplate(totalDurationTime);
@@ -35,7 +34,7 @@ const createStatisticsTemplate = (films, user) => {
     `<section class="statistic">
       <p class="statistic__rank">
         Your rank
-        <img class="statistic__img" src="${avatar}" alt="Avatar" width="35" height="35">
+        <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
         <span class="statistic__rank-label">${userRank}</span>
       </p>
 
@@ -144,11 +143,10 @@ const renderStatisticsChart = (statisticsCtx, films) => {
 };
 
 export default class Statistics extends SmartView {
-  constructor(films, user) {
+  constructor(films) {
     super();
 
     this._films = [...films].filter((film) => film.isWatched);
-    this._user = user;
 
     this._statsChart = null;
     this._currentPeriod = PeriodFilter.ALL_TIME;
@@ -162,7 +160,7 @@ export default class Statistics extends SmartView {
   }
 
   getTemplate() {
-    return createStatisticsTemplate(this._films, this._user);
+    return createStatisticsTemplate(this._films);
   }
 
   removeElement() {

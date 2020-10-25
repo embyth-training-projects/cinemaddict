@@ -1,4 +1,4 @@
-import Observer from '../utils/observer';
+import Observer from './observer';
 
 export default class Films extends Observer {
   constructor() {
@@ -9,6 +9,7 @@ export default class Films extends Observer {
 
   setFilms(films) {
     this._films = films;
+    // this._notify(updateType);
   }
 
   getFilms() {

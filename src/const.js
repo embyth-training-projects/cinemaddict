@@ -2,16 +2,6 @@ export const EMOTIONS = [`smile`, `sleeping`, `puke`, `angry`];
 
 export const AUTHORS = [`Max Kolesnik`, `Vladislav Matyash`, `Nazar Mirniy`, `Sergey Soroka`, `Omar Habuniia`];
 
-export const AVATAR_PATHS = [
-  `images/bitmap.png`,
-  `images/emoji/angry.png`,
-  `images/emoji/puke.png`,
-  `images/emoji/sleeping.png`,
-  `images/emoji/smile.png`,
-];
-
-export const RANKS = [`novice`, `fan`, `movie buff`];
-
 export const MOVIES_AMOUNT = {
   PER_STEP: 5,
   TOP_RATED: 2,

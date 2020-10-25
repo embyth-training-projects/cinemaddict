@@ -1,4 +1,3 @@
-// Подключаем необходимые компоненты
 import UserRankView from './view/user-rank';
 import FooterStatsView from './view/footer-stats';
 import StatisticsView from './view/statistics';
@@ -7,12 +6,10 @@ import FilterPresenter from './presenter/filter';
 import FilmsModel from './model/films';
 import FilterModel from './model/filter';
 import MenuModel from './model/menu';
-import {generateUser} from './mock/user';
 import {remove, render} from './utils/render';
 import {MenuItem, UpdateType} from './const';
 import Api from './api';
 
-const user = generateUser();
 const AUTHORIZATION = `Basic 8yg9123uin12ok3h=`;
 const END_POINT = `https://12.ecmascript.pages.academy/cinemaddict`;
 
@@ -26,7 +23,8 @@ const menuModel = new MenuModel();
 const filterModel = new FilterModel();
 const filmsModel = new FilmsModel();
 
-const userRankComponent = new UserRankView(user);
+const userRankComponent = new UserRankView(filmsModel);
+const footerStatsComponent = new FooterStatsView(filmsModel);
 const filterPresenter = new FilterPresenter(siteMainNode, filterModel, menuModel, filmsModel);
 const boardPresenter = new BoardPresenter(siteMainNode, filterModel, filmsModel);
 
@@ -44,7 +42,7 @@ const handleSiteMenuClick = (menuItem) => {
       break;
     case MenuItem.STATISTICS:
       boardPresenter.destroy();
-      statisticsComponent = new StatisticsView(filmsModel.getFilms(), user);
+      statisticsComponent = new StatisticsView(filmsModel.getFilms());
       render(siteMainNode, statisticsComponent);
       statisticsComponent.init();
       break;
@@ -57,9 +55,8 @@ render(siteHeaderNode, userRankComponent);
 filterPresenter.init();
 filterPresenter.setMenuClickHandler(handleSiteMenuClick);
 boardPresenter.init();
+render(footerStatictsNode, footerStatsComponent);
 
 api.getFilms().then((films) => {
   filmsModel.setFilms(films);
-
-  render(footerStatictsNode, new FooterStatsView(films.length));
 });
