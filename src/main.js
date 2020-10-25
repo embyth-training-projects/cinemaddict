@@ -7,22 +7,29 @@ import FilterPresenter from './presenter/filter';
 import FilmsModel from './model/films';
 import FilterModel from './model/filter';
 import MenuModel from './model/menu';
-import {generateMovie} from './mock/movie';
 import {generateUser} from './mock/user';
 import {remove, render} from './utils/render';
-import {MenuItem, MOVIES_AMOUNT, UpdateType} from './const';
+import {MenuItem, UpdateType} from './const';
 import Api from './api';
 
-// Генерируем необходимые данные для заполнения
-const movies = new Array(MOVIES_AMOUNT.TOTAL).fill().map(generateMovie);
 const user = generateUser();
 const AUTHORIZATION = `Basic 8yg9123uin12ok3h=`;
 const END_POINT = `https://12.ecmascript.pages.academy/cinemaddict`;
+
+const siteHeaderNode = document.querySelector(`.header`);
+const siteMainNode = document.querySelector(`.main`);
+const footerStatictsNode = document.querySelector(`.footer__statistics`);
+
 const api = new Api(END_POINT, AUTHORIZATION);
 
-api.getFilms().then((films) => {
-  console.log(films);
-});
+const menuModel = new MenuModel();
+const filterModel = new FilterModel();
+const filmsModel = new FilmsModel();
+
+const userRankComponent = new UserRankView(user);
+const filterPresenter = new FilterPresenter(siteMainNode, filterModel, menuModel, filmsModel);
+const boardPresenter = new BoardPresenter(siteMainNode, filterModel, filmsModel);
+
 let statisticsComponent = null;
 
 const handleSiteMenuClick = (menuItem) => {
@@ -46,22 +53,13 @@ const handleSiteMenuClick = (menuItem) => {
   menuModel.setMenuItem(UpdateType.NONE, menuItem);
 };
 
-const filmsModel = new FilmsModel();
-filmsModel.setFilms(movies);
-
-const filterModel = new FilterModel();
-const menuModel = new MenuModel();
-
-const siteHeaderNode = document.querySelector(`.header`);
-const siteMainNode = document.querySelector(`.main`);
-const footerStatictsNode = document.querySelector(`.footer__statistics`);
-
-render(siteHeaderNode, new UserRankView(user));
-
-const boardPresenter = new BoardPresenter(siteMainNode, filterModel, filmsModel);
-const filterPresenter = new FilterPresenter(siteMainNode, filterModel, menuModel, filmsModel);
+render(siteHeaderNode, userRankComponent);
 filterPresenter.init();
 filterPresenter.setMenuClickHandler(handleSiteMenuClick);
 boardPresenter.init();
 
-render(footerStatictsNode, new FooterStatsView(movies.length));
+api.getFilms().then((films) => {
+  filmsModel.setFilms(films);
+
+  render(footerStatictsNode, new FooterStatsView(films.length));
+});
