@@ -11,10 +11,18 @@ import {generateMovie} from './mock/movie';
 import {generateUser} from './mock/user';
 import {remove, render} from './utils/render';
 import {MenuItem, MOVIES_AMOUNT, UpdateType} from './const';
+import Api from './api';
 
 // Генерируем необходимые данные для заполнения
 const movies = new Array(MOVIES_AMOUNT.TOTAL).fill().map(generateMovie);
 const user = generateUser();
+const AUTHORIZATION = `Basic 8yg9123uin12ok3h=`;
+const END_POINT = `https://12.ecmascript.pages.academy/cinemaddict`;
+const api = new Api(END_POINT, AUTHORIZATION);
+
+api.getFilms().then((films) => {
+  console.log(films);
+});
 let statisticsComponent = null;
 
 const handleSiteMenuClick = (menuItem) => {
