@@ -9,10 +9,11 @@ const Mode = {
 };
 
 export default class Film {
-  constructor(filmsListContainer, changeData, changeMode) {
+  constructor(filmsListContainer, changeData, changeMode, api) {
     this._filmsListContainer = filmsListContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
+    this._api = api;
 
     this._filmComponent = null;
     this._filmDetailsComponent = null;
@@ -36,7 +37,7 @@ export default class Film {
     const prevFilmDetailsComponent = this._filmDetailsComponent;
 
     this._filmComponent = new FilmCardView(film);
-    this._filmDetailsComponent = new FilmDetailsView(film);
+    this._filmDetailsComponent = new FilmDetailsView(film, this._api);
 
     this._filmComponent.openDetailsClickHandler(this._handleOpenDetailsClick);
     this._filmComponent.setFavoriteClickHandler(this._handleFavoriteClick);

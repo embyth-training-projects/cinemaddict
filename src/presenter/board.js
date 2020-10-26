@@ -168,7 +168,7 @@ export default class Board {
   }
 
   _renderFilm(film, container, type) {
-    const filmPresenter = new FilmPresenter(container, this._handleViewAction, this._handleModeChange);
+    const filmPresenter = new FilmPresenter(container, this._handleViewAction, this._handleModeChange, this._api);
     filmPresenter.init(film);
 
     switch (type) {

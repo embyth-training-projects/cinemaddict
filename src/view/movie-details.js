@@ -20,7 +20,7 @@ const getEmojiPath = (emoji) => {
 };
 
 const createCommentItemTemplate = (commentItem) => {
-  const {emoji, date, author, comment} = commentItem;
+  const {emoji, date, author, comment, id} = commentItem;
 
   const emojiPath = getEmojiPath(emoji);
   const formattedDate = getHumanizeCommentDate(date);
@@ -35,7 +35,7 @@ const createCommentItemTemplate = (commentItem) => {
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${formattedDate}</span>
-          <button class="film-details__comment-delete">Delete</button>
+          <button class="film-details__comment-delete" data-comment-id="${id}">Delete</button>
         </p>
       </div>
     </li>`
@@ -197,10 +197,11 @@ const createFilmDetailsTemplate = (movie) => {
 };
 
 export default class FilmDetails extends SmartView {
-  constructor(movie) {
+  constructor(movie, api) {
     super();
 
     this._data = FilmDetails.parseFilmToData(movie);
+    this._api = api;
 
     this._closeClickHandler = this._closeClickHandler.bind(this);
 
@@ -308,21 +309,30 @@ export default class FilmDetails extends SmartView {
   setDeleteClickHandler(callback) {
     this._callback.deleteClick = callback;
     this.getElement()
-    .querySelectorAll(`.film-details__comment-delete`)
-    .forEach((button, index) => button.addEventListener(`click`, (evt) => {
-      evt.preventDefault();
-      this._deleteClickHandler(index);
-    }));
+      .querySelectorAll(`.film-details__comment-delete`)
+      .forEach((button) => button.addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        this._deleteClickHandler(button);
+      }));
   }
 
-  _deleteClickHandler(index) {
-    this.updateData(Object.assign(
-        {},
-        this._data,
-        {comments: [...this._data.comments.slice(0, index), ...this._data.comments.slice(index + 1)]}
-    ), true);
+  _deleteClickHandler(button) {
+    const commentId = button.dataset.commentId;
+    button.disabled = true;
+    button.textContent = `Deleting...`;
 
-    this._callback.deleteClick(FilmDetails.parseDataToFilm(this._data));
+    this._api.deleteComment(commentId)
+      .then(() => {
+        this.updateData(
+            Object.assign(
+                {},
+                this._data,
+                {
+                  comments: [...this._data.comments.filter((item) => item.id !== commentId)]
+                }
+            ), true);
+        this._callback.deleteClick(FilmDetails.parseDataToFilm(this._data));
+      });
   }
 
   setAddCommentKeyDownHandler(callback) {
@@ -334,14 +344,25 @@ export default class FilmDetails extends SmartView {
 
   _addCommentKeyDownHandler(evt) {
     if (evt.ctrlKey && evt.key === `Enter` && this._data.userText !== null && this._data.userText.length > 0 && this._data.userEmoji !== null) {
-      const newComments = [...this._data.comments, this._createComment()];
-      this.updateData(Object.assign(
-          {},
-          this._data,
-          {comments: newComments}
-      ));
-      this._callback.addCommentKeyDown(FilmDetails.parseDataToFilm(this._data));
-      this._data.userText = null;
+      evt.target.disabled = true;
+
+      const newComment = {
+        "comment": he.encode(this._data.userText),
+        "date": new Date().toISOString(),
+        "emotion": this._data.userEmoji,
+      };
+
+      this._api.addComment(this._data, newComment)
+        .then((response) => {
+          this.updateData(Object.assign(
+              {},
+              response
+          ));
+
+          this._callback.addCommentKeyDown(FilmDetails.parseDataToFilm(this._data));
+          this._data.userText = null;
+          this._data.userEmoji = null;
+        });
     }
   }
 
