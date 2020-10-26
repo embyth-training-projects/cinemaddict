@@ -57,6 +57,6 @@ filterPresenter.setMenuClickHandler(handleSiteMenuClick);
 boardPresenter.init();
 render(footerStatictsNode, footerStatsComponent);
 
-api.getFilms().then((films) => {
-  filmsModel.setFilms(films);
-});
+api.getFilms()
+  .then((films) => filmsModel.setFilms(UpdateType.INIT, films))
+  .catch(() => filmsModel.setFilms(UpdateType.INIT, []));
