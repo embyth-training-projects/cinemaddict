@@ -2,6 +2,7 @@ import BoardView from '../view/board';
 import SortView from '../view/sort';
 import FilmsListView from '../view/films-list';
 import NoDataView from '../view/no-data';
+import LoadingView from '../view/loading';
 import FilmPresenter from '../presenter/movie';
 import ExtraContainerView from '../view/extra-container';
 import ShowMoreButtonView from '../view/show-more-button';
@@ -30,6 +31,7 @@ export default class Board {
     this._filmsModel = filmsModel;
     this._renderedMoviesCount = MOVIES_AMOUNT.PER_STEP;
     this._currentSortType = SortType.DEFAULT;
+    this._isLoading = true;
     this._filmPresenter = {};
     this._filmTopRatedPresenter = {};
     this._filmMostCommentedPresenter = {};
@@ -42,6 +44,7 @@ export default class Board {
     this._boardComponent = new BoardView();
     this._filmsListComponent = new FilmsListView();
     this._noDataComponent = new NoDataView();
+    this._loadingComponent = new LoadingView();
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -55,7 +58,6 @@ export default class Board {
     this._filterModel.addObserver(this._handleModelEvent);
 
     this._renderBoard();
-    this._renderExtraBoard();
   }
 
   destroy() {
@@ -103,11 +105,15 @@ export default class Board {
         this._handleFilmsChange(data);
         break;
       case UpdateType.MINOR:
-        this._clearBoard({clearExtraBoards: true});
+        this._clearBoard();
         this._renderBoard();
-        this._renderExtraBoard();
         break;
       case UpdateType.MAJOR:
+        this._clearBoard({resetRenderedFilmsCount: true, resetSortType: true});
+        this._renderBoard();
+        break;
+      case UpdateType.INIT:
+        this._isLoading = false;
         this._clearBoard({resetRenderedFilmsCount: true, resetSortType: true});
         this._renderBoard();
         break;
@@ -180,6 +186,10 @@ export default class Board {
     render(this._boardComponent, this._noDataComponent);
   }
 
+  _renderLoading() {
+    render(this._boardComponent, this._loadingComponent, RenderPosition.AFTERBEGIN);
+  }
+
   _handleShowMoreButtonClick() {
     const filmsCount = this._getFilms().length;
     const newRenderedFilmsCount = Math.min(filmsCount, this._renderedMoviesCount + MOVIES_AMOUNT.PER_STEP);
@@ -203,7 +213,7 @@ export default class Board {
     render(this._filmsListComponent, this._showMoreButtonComponent);
   }
 
-  _clearBoard({resetRenderedFilmsCount = false, resetSortType = false, clearExtraBoards = false} = {}) {
+  _clearBoard({resetRenderedFilmsCount = false, resetSortType = false} = {}) {
     const filmsCount = this._getFilms().length;
 
     Object
@@ -213,7 +223,9 @@ export default class Board {
     this._filmPresenter = {};
 
     remove(this._sortComponent);
+    remove(this._boardComponent);
     remove(this._noDataComponent);
+    remove(this._loadingComponent);
     remove(this._showMoreButtonComponent);
 
     if (resetRenderedFilmsCount) {
@@ -226,18 +238,16 @@ export default class Board {
       this._currentSortType = SortType.DEFAULT;
     }
 
-    if (clearExtraBoards) {
-      [
-        ...Object.values(this._filmTopRatedPresenter),
-        ...Object.values(this._filmMostCommentedPresenter)
-      ].forEach((presenter) => presenter.destroy());
+    [
+      ...Object.values(this._filmTopRatedPresenter),
+      ...Object.values(this._filmMostCommentedPresenter)
+    ].forEach((presenter) => presenter.destroy());
 
-      this._filmTopRatedPresenter = {};
-      this._filmMostCommentedPresenter = {};
+    this._filmTopRatedPresenter = {};
+    this._filmMostCommentedPresenter = {};
 
-      this._extraBoards.forEach((board) => remove(board));
-      this._extraBoards = [];
-    }
+    this._extraBoards.forEach((board) => remove(board));
+    this._extraBoards = [];
   }
 
   _renderExtraList(listType, films) {
@@ -274,6 +284,11 @@ export default class Board {
     this._renderSort();
     render(this._boardContainer, this._boardComponent, RenderPosition.BEFOREEND);
 
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
+
     if (filmsCount === 0) {
       this._renderNoData();
       return;
@@ -285,5 +300,7 @@ export default class Board {
     if (filmsCount > this._renderedMoviesCount) {
       this._renderShowMoreButton();
     }
+
+    this._renderExtraBoard();
   }
 }
