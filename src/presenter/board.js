@@ -25,10 +25,11 @@ const extraListType = {
 };
 
 export default class Board {
-  constructor(boardContainer, filterModel, filmsModel) {
+  constructor(boardContainer, filterModel, filmsModel, api) {
     this._boardContainer = boardContainer;
     this._filterModel = filterModel;
     this._filmsModel = filmsModel;
+    this._api = api;
     this._renderedMoviesCount = MOVIES_AMOUNT.PER_STEP;
     this._currentSortType = SortType.DEFAULT;
     this._isLoading = true;
@@ -88,7 +89,8 @@ export default class Board {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_MOVIE:
-        this._filmsModel.updateFilm(updateType, update);
+        this._api.updateFilm(update)
+          .then((response) => this._filmsModel.updateFilm(updateType, response));
         break;
       case UserAction.ADD_COMMENT:
         this._filmsModel.addComment(updateType, update);

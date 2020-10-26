@@ -98,6 +98,9 @@ export default class Films extends Observer {
   }
 
   static adaptToServer(film) {
+    const adaptedComments = [];
+    film.comments.forEach((comment) => adaptedComments.push(comment.id));
+
     const adaptedFilm = Object.assign(
         {},
         film,
@@ -124,7 +127,8 @@ export default class Films extends Observer {
             "favorite": film.isFavorite,
             "already_watched": film.isWatched,
             "watching_date": film.watchingDate instanceof Date ? film.watchingDate.toISOString() : null,
-          }
+          },
+          "comments": adaptedComments
         }
     );
 

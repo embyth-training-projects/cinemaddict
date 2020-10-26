@@ -26,7 +26,7 @@ const filmsModel = new FilmsModel();
 const userRankComponent = new UserRankView(filmsModel);
 const footerStatsComponent = new FooterStatsView(filmsModel);
 const filterPresenter = new FilterPresenter(siteMainNode, filterModel, menuModel, filmsModel);
-const boardPresenter = new BoardPresenter(siteMainNode, filterModel, filmsModel);
+const boardPresenter = new BoardPresenter(siteMainNode, filterModel, filmsModel, api);
 
 let statisticsComponent = null;
 
