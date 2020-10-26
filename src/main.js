@@ -53,10 +53,17 @@ const handleSiteMenuClick = (menuItem) => {
 
 render(siteHeaderNode, userRankComponent);
 filterPresenter.init();
-filterPresenter.setMenuClickHandler(handleSiteMenuClick);
 boardPresenter.init();
 render(footerStatictsNode, footerStatsComponent);
 
 api.getFilms()
-  .then((films) => filmsModel.setFilms(UpdateType.INIT, films))
-  .catch(() => filmsModel.setFilms(UpdateType.INIT, []));
+  .then((films) => {
+    filterPresenter.setInnerHandlers();
+    filterPresenter.setMenuClickHandler(handleSiteMenuClick);
+    filmsModel.setFilms(UpdateType.INIT, films);
+  })
+  .catch(() => {
+    filterPresenter.setInnerHandlers();
+    filterPresenter.setMenuClickHandler(handleSiteMenuClick);
+    filmsModel.setFilms(UpdateType.INIT, []);
+  });

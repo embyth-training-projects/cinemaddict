@@ -158,7 +158,10 @@ export default class Board {
     }
 
     this._sortComponent = new SortView(this._currentSortType);
-    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+
+    if (!this._isLoading) {
+      this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+    }
     render(this._boardContainer, this._sortComponent, RenderPosition.BEFOREEND);
   }
 

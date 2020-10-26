@@ -10,6 +10,7 @@ export default class Filter {
     this._menuModel = menuModel;
     this._filmsModel = filmsModel;
     this._currentFilter = null;
+    this._menuClickHandler = null;
 
     this._filterComponent = null;
 
@@ -29,7 +30,6 @@ export default class Filter {
     const prevFilterComponent = this._filterComponent;
 
     this._filterComponent = new FilterView(filters, this._currentFilter, this._currentMenuItem);
-    this._filterComponent.setFilterTypeClickHandler(this._handleFilterTypeClick);
 
     if (prevFilterComponent === null) {
       render(this._filterContainer, this._filterComponent, RenderPosition.BEFOREEND);
@@ -38,6 +38,10 @@ export default class Filter {
 
     replace(this._filterComponent, prevFilterComponent);
     remove(prevFilterComponent);
+  }
+
+  setInnerHandlers() {
+    this._filterComponent.setFilterTypeClickHandler(this._handleFilterTypeClick);
   }
 
   setMenuClickHandler(callback) {
@@ -59,6 +63,7 @@ export default class Filter {
 
   _handleModelEvent() {
     this.init();
+    this.setInnerHandlers();
     this._restoreHandlers();
   }
 
