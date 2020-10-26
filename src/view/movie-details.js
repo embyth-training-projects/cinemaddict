@@ -1,6 +1,7 @@
 import SmartView from './smart';
 import {getFormattedReleaseDate, getFormattedRuntime, getHumanizeCommentDate} from '../utils/date';
 import {getRandomElement} from '../utils/common';
+import {renderTemplate} from '../utils/render';
 import {AUTHORS} from '../const';
 import he from 'he';
 
@@ -305,7 +306,11 @@ export default class FilmDetails extends SmartView {
 
     this.updateData({
       userEmoji: emoji
-    });
+    }, true);
+
+    this.getElement()
+      .querySelector(`.film-details__add-emoji-label`)
+      .innerHTML = createSelectedEmojiTemplate(emoji);
   }
 
   setDeleteClickHandler(callback) {

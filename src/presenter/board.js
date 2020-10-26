@@ -188,7 +188,7 @@ export default class Board {
   }
 
   _renderNoData() {
-    render(this._boardComponent, this._noDataComponent);
+    render(this._boardComponent, this._noDataComponent, RenderPosition.AFTERBEGIN);
   }
 
   _renderLoading() {
@@ -268,7 +268,7 @@ export default class Board {
   }
 
   _renderExtraBoard() {
-    const films = this._getFilms();
+    const films = this._filmsModel.getFilms();
 
     const isEveryFilmContainsComments = films.every((film) => film.comments.length === 0);
     const isEveryFilmHasZeroRating = films.every((film) => film.totalRating === 0);
@@ -294,6 +294,10 @@ export default class Board {
       return;
     }
 
+    if (this._filmsModel.getFilms().length > 0) {
+      this._renderExtraBoard();
+    }
+
     if (filmsCount === 0) {
       this._renderNoData();
       return;
@@ -305,7 +309,5 @@ export default class Board {
     if (filmsCount > this._renderedMoviesCount) {
       this._renderShowMoreButton();
     }
-
-    this._renderExtraBoard();
   }
 }
