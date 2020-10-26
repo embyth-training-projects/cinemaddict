@@ -76,7 +76,10 @@ export default class Films extends Observer {
           director: film.film_info.director,
           genres: film.film_info.genre,
           poster: film.film_info.poster,
-          release: film.film_info.release,
+          release: {
+            date: (film.film_info.release.date) ? new Date(film.film_info.release.date) : ``,
+            releaseCountry: film.film_info.release.release_country
+          },
           runtime: film.film_info.runtime,
           title: film.film_info.title,
           totalRating: film.film_info.total_rating,
@@ -84,7 +87,7 @@ export default class Films extends Observer {
           isWatchlisted: film.user_details.watchlist,
           isFavorite: film.user_details.favorite,
           isWatched: film.user_details.already_watched,
-          watchingDate: film.user_details.watching_date
+          watchingDate: (film.user_details.watching_date) ? new Date(film.user_details.watching_date) : ``,
         }
     );
 
@@ -107,7 +110,10 @@ export default class Films extends Observer {
             "director": film.director,
             "genre": film.genres,
             "poster": film.poster,
-            "release": film.release,
+            "release": {
+              "date": film.release.date instanceof Date ? film.release.date.toISOString() : null,
+              "release_country": film.release.releaseCountry,
+            },
             "runtime": film.runtime,
             "title": film.title,
             "total_rating": film.totalRating,
@@ -117,7 +123,7 @@ export default class Films extends Observer {
             "watchlist": film.isWatchlisted,
             "favorite": film.isFavorite,
             "already_watched": film.isWatched,
-            "watching_date": film.watchingDate
+            "watching_date": film.watchingDate instanceof Date ? film.watchingDate.toISOString() : null,
           }
         }
     );
@@ -140,5 +146,23 @@ export default class Films extends Observer {
     delete adaptedFilm.watchingDate;
 
     return adaptedFilm;
+  }
+
+  static adaptCommentsToClient(comments, film) {
+    film.comments = [];
+
+    comments.forEach((comment) => {
+      const item = {
+        author: comment.author,
+        id: comment.id,
+        emoji: comment.emotion,
+        comment: comment.comment,
+        date: (comment.date) ? new Date(comment.date) : ``,
+      };
+
+      film.comments.push(item);
+    });
+
+    return film;
   }
 }

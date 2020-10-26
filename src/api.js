@@ -19,7 +19,15 @@ export default class Api {
   getFilms() {
     return this._load({url: `movies`})
       .then(Api.toJSON)
-      .then((films) => films.map(FilmsModel.adaptToClient));
+      .then((films) => films.map(FilmsModel.adaptToClient))
+      .then((films) => films.map((film) => this._getComments(film)))
+      .then((films) => Promise.all(films));
+  }
+
+  _getComments(film) {
+    return this._load({url: `comments/${film.id}`})
+      .then(Api.toJSON)
+      .then((comments) => FilmsModel.adaptCommentsToClient(comments, film));
   }
 
   updateFilm(film) {
