@@ -11,6 +11,8 @@ const EmojiType = {
   ANGRY: `angry`,
 };
 
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
 const createGenreItemTemplate = (genre) => {
   return `<span class="film-details__genre">${genre}</span>`;
 };
@@ -332,6 +334,15 @@ export default class FilmDetails extends SmartView {
                 }
             ), true);
         this._callback.deleteClick(FilmDetails.parseDataToFilm(this._data));
+      })
+      .catch(() => {
+        button.disabled = false;
+        button.textContent = `Delete`;
+        const neededItem = Array.from(this.getElement().querySelectorAll(`.film-details__comment`)).find((item) => item.contains(button));
+        neededItem.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+        setTimeout(() => {
+          neededItem.style.animation = ``;
+        }, SHAKE_ANIMATION_TIMEOUT);
       });
   }
 
@@ -362,6 +373,14 @@ export default class FilmDetails extends SmartView {
           this._callback.addCommentKeyDown(FilmDetails.parseDataToFilm(this._data));
           this._data.userText = null;
           this._data.userEmoji = null;
+        })
+        .catch(() => {
+          evt.target.disabled = false;
+          const neededItem = this.getElement().querySelector(`.film-details__new-comment`);
+          neededItem.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+          setTimeout(() => {
+            neededItem.style.animation = ``;
+          }, SHAKE_ANIMATION_TIMEOUT);
         });
     }
   }
