@@ -1,7 +1,6 @@
 import SmartView from './smart';
 import {getFormattedReleaseDate, getFormattedRuntime, getHumanizeCommentDate} from '../utils/date';
 import {getRandomElement} from '../utils/common';
-import {renderTemplate} from '../utils/render';
 import {AUTHORS} from '../const';
 import he from 'he';
 
