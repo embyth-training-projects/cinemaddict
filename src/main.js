@@ -8,7 +8,7 @@ import FilterModel from './model/filter';
 import MenuModel from './model/menu';
 import {remove, render} from './utils/render';
 import {MenuItem, UpdateType} from './const';
-import Api from './api';
+import Api from './api/index';
 
 const AUTHORIZATION = `Basic 8yg9123uin12ok3h=`;
 const END_POINT = `https://12.ecmascript.pages.academy/cinemaddict`;
