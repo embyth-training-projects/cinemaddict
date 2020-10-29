@@ -67,3 +67,13 @@ api.getFilms()
     filterPresenter.setMenuClickHandler(handleSiteMenuClick);
     filmsModel.setFilms(UpdateType.INIT, []);
   });
+
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`)
+    .then(() => {
+      console.log(`ServiceWorker available`); // eslint-disable-line
+    })
+    .catch(() => {
+      console.log(`ServiceWorker isn't available`); // eslint-disable-line
+    });
+});
