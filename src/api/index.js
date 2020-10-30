@@ -29,7 +29,7 @@ export default class Api {
   _getComments(film) {
     return this._load({url: `comments/${film.id}`})
       .then(Api.toJSON)
-      .then((comments) => FilmsModel.adaptCommentsToClient(comments, film));
+      .then((comments) => FilmsModel.combineDataToClient(comments, film));
   }
 
   updateFilm(film) {
@@ -54,7 +54,7 @@ export default class Api {
       .then(Api.toJSON)
       .then((response) => {
         const adaptedFilm = FilmsModel.adaptToClient(response.movie);
-        return FilmsModel.adaptCommentsToClient(response.comments, adaptedFilm);
+        return FilmsModel.combineDataToClient(response.comments, adaptedFilm);
       });
   }
 

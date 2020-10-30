@@ -152,8 +152,8 @@ export default class Films extends Observer {
     return adaptedFilm;
   }
 
-  static adaptCommentsToClient(comments, film) {
-    film.comments = [];
+  static adaptCommentsToClient(comments) {
+    const adaptedComments = [];
 
     comments.forEach((comment) => {
       const item = {
@@ -164,9 +164,32 @@ export default class Films extends Observer {
         date: (comment.date) ? new Date(comment.date) : ``,
       };
 
-      film.comments.push(item);
+      adaptedComments.push(item);
     });
 
+    return adaptedComments;
+  }
+
+  static adaptCommentsToServer(film) {
+    const adaptedComments = [];
+
+    film.comments.forEach((comment) => {
+      const item = {
+        author: comment.author || `You`,
+        id: comment.id,
+        emotion: comment.emoji || comment.emotion,
+        comment: comment.comment,
+        date: (comment.date instanceof Date) ? comment.date.toISOString() : comment.date,
+      };
+
+      adaptedComments.push(item);
+    });
+
+    return adaptedComments;
+  }
+
+  static combineDataToClient(comments, film) {
+    film.comments = this.adaptCommentsToClient(comments);
     return film;
   }
 }
