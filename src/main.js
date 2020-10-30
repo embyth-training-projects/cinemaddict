@@ -9,16 +9,22 @@ import MenuModel from './model/menu';
 import {remove, render} from './utils/render';
 import {MenuItem, UpdateType} from './const';
 import Api from './api/index';
+import Store from './api/store';
+import Provider from './api/provider';
 
 const AUTHORIZATION = `Basic 8yg9123uin12ok3h=`;
 const END_POINT = `https://12.ecmascript.pages.academy/cinemaddict`;
+const STORE_PREFIX = `cinemaddict-localstorage`;
+const STORE_VER = `v1`;
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
 const siteHeaderNode = document.querySelector(`.header`);
 const siteMainNode = document.querySelector(`.main`);
 const footerStatictsNode = document.querySelector(`.footer__statistics`);
 
 const api = new Api(END_POINT, AUTHORIZATION);
-
+const store = new Store(STORE_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, store);
 const menuModel = new MenuModel();
 const filterModel = new FilterModel();
 const filmsModel = new FilmsModel();
@@ -26,7 +32,7 @@ const filmsModel = new FilmsModel();
 const userRankComponent = new UserRankView(filmsModel);
 const footerStatsComponent = new FooterStatsView(filmsModel);
 const filterPresenter = new FilterPresenter(siteMainNode, filterModel, menuModel, filmsModel);
-const boardPresenter = new BoardPresenter(siteMainNode, filterModel, filmsModel, api);
+const boardPresenter = new BoardPresenter(siteMainNode, filterModel, filmsModel, apiWithProvider);
 
 let statisticsComponent = null;
 
@@ -56,7 +62,7 @@ filterPresenter.init();
 boardPresenter.init();
 render(footerStatictsNode, footerStatsComponent);
 
-api.getFilms()
+apiWithProvider.getFilms()
   .then((films) => {
     filterPresenter.setInnerHandlers();
     filterPresenter.setMenuClickHandler(handleSiteMenuClick);
@@ -76,4 +82,13 @@ window.addEventListener(`load`, () => {
     .catch(() => {
       console.log(`ServiceWorker isn't available`); // eslint-disable-line
     });
+});
+
+window.addEventListener(`online`, () => {
+  document.title = document.title.replace(` [offline]`, ``);
+  apiWithProvider.sync();
+});
+
+window.addEventListener(`offline`, () => {
+  document.title += ` [offline]`;
 });
